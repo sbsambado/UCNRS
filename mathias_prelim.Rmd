@@ -1,0 +1,48 @@
+---
+title: "prelim"
+author: "sbsambado"
+date: "5/4/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+library(tidyverse)
+library(ggplot2)
+
+prelim <- read_csv("California Tick Data Base - Sheet1.csv")
+
+levels(prelim$reserve)[levels(prelim$reserve) == "Sedgewick"] <- "Sedgwick"
+levels(prelim$genus)[levels(prelim$genus) == "Haemphysalis"] <- "Haemaphysalis"
+
+
+prelim <- subset(prelim, reserve != "Paradise Reserve")
+prelim$reserve
+prelim$month <- factor(prelim$month,
+                       levels = c("January", "March", "April", "May"))
+
+unique(prelim$reserve)
+unique(prelim$genus)
+prelim$reserve <- factor(prelim$reserve,
+                       levels = c("McLaughlin", "Quail Ridge", "Point Reyes",
+                                  "Fort Ord", "Hastings", "Big Creek", "Rancho Marino",
+                                  "Coal Oil Point", "Sedgwick", "Santa Cruz Island", "Stunt Ranch"))
+```
+
+
+
+```{r}
+
+dim(prelim)
+
+
+ggplot(prelim, aes(y = genus, x = month, fill = genus )) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~reserve) +
+  theme_bw()
+
+
+```
+
