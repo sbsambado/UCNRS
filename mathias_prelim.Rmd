@@ -38,10 +38,271 @@ prelim$reserve <- factor(prelim$reserve,
 dim(prelim)
 
 
-ggplot(prelim, aes(y = genus, x = month, fill = genus )) +
+ggplot(prelim, aes(y = genus, x = month, fill = life_stage )) +
   geom_histogram(stat = "identity") +
   facet_wrap(~reserve) +
   theme_bw()
+
+
+```
+
+
+
+### Lizard data
+```{r}
+
+liz <- read_csv("Mathias2021_FieldData_Lizard - Sheet1.csv")
+dim(liz)
+
+names(liz) <- c('reserve', 'round', 'date', 'liz', 'burden', 'site')
+
+liz$round <- as.factor(liz$round)
+
+
+liz$region <- liz$reserve
+
+liz$region[liz$reserve == "McLaughlin"] <- "northern"
+liz$region[liz$reserve == "Quail Ridge"] <- "northern"
+liz$region[liz$reserve == "Point Reyes"] <- "northern"
+
+liz$region[liz$reserve == "Fort Ord"] <- "central"
+liz$region[liz$reserve == "Hastings"] <- "central"
+liz$region[liz$reserve == "Big Creek"] <- "central"
+liz$region[liz$reserve == "Rancho Marino"] <- "central"
+
+liz$region[liz$reserve == "Sedgwick"] <- "southern"
+liz$region[liz$reserve == "Coal Oil Point"] <- "southern"
+liz$region[liz$reserve == "Stunt Ranch"] <- "southern"
+liz$region[liz$reserve == "Santa Cruz Island"] <- "southern"
+
+
+liz$reserve <- factor(liz$reserve,
+                      levels = c("McLaughlin", "Quail Ridge", "Point Reyes",
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", "Coal Oil Point",
+                                 "Stunt Ranch", "Santa Cruz Island"))
+
+
+
+liz$location <- liz$region
+
+liz$location[liz$reserve == "McLaughlin"] <- "inland"
+liz$location[liz$reserve == "Quail Ridge"] <- "inland"
+liz$location[liz$reserve == "Point Reyes"] <- "coastal"
+
+liz$location[liz$reserve == "Fort Ord"] <- "coastal"
+liz$location[liz$reserve == "Hastings"] <- "inland"
+liz$location[liz$reserve == "Big Creek"] <- "coastal"
+liz$location[liz$reserve == "Rancho Marino"] <- "coastal"
+
+liz$location[liz$reserve == "Sedgwick"] <- "inland"
+liz$location[liz$reserve == "Coal Oil Point"] <- "coastal"
+liz$location[liz$reserve == "Stunt Ranch"] <- "inland"
+liz$location[liz$reserve == "Santa Cruz Island"] <- "inland"
+
+
+liz$month <- liz$date
+
+liz$month[liz$round == "2"] <- "March"
+liz$month[liz$round == "3"] <- "April"
+liz$month[liz$round == "4"] <- "May"
+
+liz$month <- factor(liz$month, 
+                    levels = c("March", "April", "May"))
+
+liz$region <- factor(liz$region, 
+                     levels = c("northern", "central", "southern"))
+
+```
+
+```{r}
+ggplot(liz, aes(x = month, y = log(burden))) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .5) +
+  theme_classic()
+
+ggplot(liz, aes(x = month, y = log(burden))) +
+  geom_boxplot() +
+  facet_wrap(~reserve) +
+  theme_classic()
+
+ggplot(liz, aes(x = month, y = log(burden))) +
+  geom_boxplot() +
+  facet_wrap(~region, scale = "free_y",ncol = 1) +
+  geom_jitter(aes(color = reserve))+
+  theme_bw()
+
+ggplot(liz, aes(x = month, y = log(burden))) +
+  geom_boxplot() +
+  facet_wrap(~location, ncol = 1) +
+  geom_jitter(aes(color = reserve))+
+  theme_bw()
+
+
+liz$julian <- as.Date(liz$date, format = "%m/%d/ %y")
+
+liz$julian <- format(liz$julian, "%j")
+
+liz$julian <- as.numeric(liz$julian)
+ggplot(liz, aes(x = julian, y = log(burden +1 ), color = location))+
+  geom_point() +
+  geom_smooth(se = FALSE)
+
+ggplot(liz, aes(x = julian, y = burden, color = reserve)) +
+  geom_jitter(alpha = .5) +
+  facet_wrap(~ location, scale = "free_y",ncol = 1) +
+  theme_light() +
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  labs(y = "Lizard burdend", x = "Julian Date", color = "Reserve")
+
+ggplot(liz, aes(x = month, y = log(burden +1 ))) +
+    geom_boxplot()+
+  geom_jitter(alpha = .5, aes(color = reserve)) +
+  facet_wrap(~ location, scale = "free_y",ncol = 1) +
+  theme_light() +
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  labs(y = "Lizard burdend", x = "Julian Date", color = "Reserve")
+
+
+ggplot(liz, aes(x = month, y = log(burden +1 ))) +
+    geom_boxplot()+
+  geom_jitter(alpha = .5, aes(color = reserve)) +
+  facet_wrap(~ region,ncol = 1) +
+  theme_light() +
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  labs(y = "Lizard burdend", x = "Month", color = "Reserve")
+
+ggplot(liz, aes(x = month, y = log(burden +1 ))) +
+    geom_boxplot()+
+  geom_jitter(alpha = .5) +
+  facet_wrap(~ region,ncol = 1) +
+    theme_minimal() +
+  theme(strip.background = element_rect(fill = 'gray95'))+
+  theme(strip.text.x = element_text(face = 'bold'))+
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  labs(y = "Lizard burdend", x = "Month", color = "Reserve")
+
+
+burdens_site <-aggregate(burden ~ reserve, data = liz, FUN = sum)
+
+burdens_site$reserve <- factor(burdens_site$reserve,
+                      levels = c("McLaughlin", "Quail Ridge", "Point Reyes",
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", "Coal Oil Point",
+                                 "Stunt Ranch", "Santa Cruz Island"))
+
+
+
+
+burdens_month <-aggregate(burden ~ month + region, data = liz, FUN = sum)
+
+
+ 
+ggplot(burdens_site, aes(x = burden, y = reserve)) +
+  geom_histogram(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+
+ggplot(burdens_month, aes(y = burden, x = month)) +
+  geom_histogram(stat = "identity") +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+
+
+
+ggplot(liz, aes(x = month, y = log(burden + 1))) +
+  geom_boxplot() +
+  facet_wrap(~reserve)
+```
+
+```{r}
+library(car)
+
+qqPlot(log(liz$burden + 1))
+
+t.test(burden ~ location, data = liz)
+liz$region <- as.factor(liz$region)
+liz_aov <- aov(burden ~ region, data = liz)
+summary(liz_aov)
+library(multcomp)
+
+TukeyHSD(liz_aov)
+
+post_hoc <- glht(liz_aov, linfct = mcp(region = 'Tukey'))
+summary(post_hoc)
+
+confint(post_hoc)
+cld(post_hoc)
+plot(post_hoc)
+
+
+
+plot(lm(log(burden +1) ~ region, data = liz))
+summary(lm(log(burden +1) ~ location, data = liz))
+
+
+mean(liz$burden[liz$region == "northern"], na.rm = TRUE)
+mean(liz$burden[liz$region == "central"], na.rm = TRUE)
+mean(liz$burden[liz$region == "southern"], na.rm = TRUE)
+
+mean(liz$burden[liz$location == "inland"], na.rm = TRUE)
+mean(liz$burden[liz$location == "coastal"], na.rm = TRUE)
+
+ggplot(liz, aes(y = log(burden + 1), x = region)) +
+    geom_boxplot(fill = "grey89",outlier.shape = NA) +
+  geom_jitter(aes(color = reserve), alpha = .3) +
+  theme_classic() +
+  labs(x = "Region", y = "log(Lizard Burden + 1)",
+       title = "Lizard burden by region") +
+  theme(legend.text = element_text(size = 5))
+
+
+ggplot(liz, aes(y = log(burden + 1), x = region)) +
+    geom_boxplot(fill = "grey89",outlier.shape = NA) +
+  geom_jitter(aes(color = reserve), alpha = .3) +
+  facet_wrap(~month, ncol = 1)+
+  theme_classic() +
+  labs(x = "Region", y = "log(Lizard Burden + 1)",
+       title = "Lizard burden by region") +
+  theme(legend.text = element_text(size = 5))
+
+
+ggplot(liz, aes(y = log(burden + 1), x = location)) +
+    geom_boxplot(fill = "grey89",outlier.shape = NA) +
+  geom_jitter(aes(color = reserve), alpha = .3) +
+  theme_classic() +
+  labs(x = "Region", y = "log(Lizard Burden + 1)",
+       title = "Lizard burden by location") +
+  theme(legend.text = element_text(size = 5))
+
+
+liz_counts <-liz %>%
+  group_by(reserve, month) %>%
+  summarise(freq = length(liz), .groups = 'drop')
+
+ggplot(liz_counts, aes(y = freq, x = reserve,fill = month)) +
+  geom_histogram(stat = "identity") +
+  coord_flip()
+  theme(axis.text.x = element_text(size = 5)) +
+    coord_flip()
+  
+liz_counts_region <-liz %>%
+  group_by(region, month) %>%
+  summarise(freq = length(liz), .groups = 'drop')
+
+ggplot(liz_counts_region, aes(y = freq, x = region,fill = month)) +
+  geom_histogram(stat = "identity") +
+  coord_flip()
+  theme(axis.text.x = element_text(size = 5)) +
+    coord_flip()
 
 
 ```
