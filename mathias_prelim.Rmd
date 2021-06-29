@@ -8,6 +8,12 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+
+```
+
+```{r message = FALSE, warning = FALSE}
+
+
 library(readr)
 library(tidyverse)
 library(ggplot2)
@@ -21,7 +27,7 @@ levels(prelim$genus)[levels(prelim$genus) == "Haemphysalis"] <- "Haemaphysalis"
 prelim <- subset(prelim, reserve != "Paradise Reserve")
 prelim$reserve
 prelim$month <- factor(prelim$month,
-                       levels = c("January", "March", "April", "May"))
+                       levels = c("January", "March", "April", "May", "June"))
 
 unique(prelim$reserve)
 unique(prelim$genus)
@@ -29,6 +35,25 @@ prelim$reserve <- factor(prelim$reserve,
                        levels = c("McLaughlin", "Quail Ridge", "Point Reyes",
                                   "Fort Ord", "Hastings", "Big Creek", "Rancho Marino",
                                   "Coal Oil Point", "Sedgwick", "Santa Cruz Island", "Stunt Ranch"))
+
+
+library(devtools)
+devtools::install_github("an-bui/calecopal")
+library(calecopal)
+names(cal_palettes)
+
+cal_palette(name = "desert", n = 15, type = "continuous")
+
+# scale_fill_manual(values = cal_palette("sierra1"))
+# scale_color_manual(values = cal_palette("sierra1"))
+
+prelim$guess <- prelim$life_stage
+
+prelim$guess[prelim$life_stage == "ID"] <- "J"
+prelim$guess[prelim$life_stage == "N"] <- "J"
+prelim$guess[prelim$life_stage == "L"] <- "J"
+
+
 ```
 
 
@@ -38,13 +63,68 @@ prelim$reserve <- factor(prelim$reserve,
 dim(prelim)
 
 
-ggplot(prelim, aes(y = genus, x = month, fill = life_stage )) +
+ggplot(prelim, aes(y = genus, x = month, fill = guess )) +
   geom_histogram(stat = "identity") +
   facet_wrap(~reserve) +
   theme_bw()
 
+prelim$count <- prelim$genus
+prelim$count <- 1
+
+tick_counts <- aggregate(count ~ reserve + month + guess, data = prelim, FUN = sum)
+aggregate(count ~ reserve, data = prelim, FUN = sum)
+
+tick_counts_sp <- tick_counts[which(tick_counts$month != "January"),]
+ggplot(tick_counts_sp, aes(x = reserve, y = count, fill = guess))+
+  geom_histogram(stat = "identity") +
+  facet_wrap(~ month) +
+  labs(y = "Tick Counts",x =  "Reserve", 
+       title = "Tick counts by month & reserve",
+       fill = "Life Stage") +
+  scale_x_discrete(limits = rev(levels(tick_counts$reserve))) +
+  scale_fill_manual(values = cal_palette("collinsia", n = 2, type = "continuous"))+
+  coord_flip() +
+  theme_bw() +
+  theme(legend.position = "bottom")
+ggsave("TickCount_ReserveMonth_rough.jpeg", dpi = 320)
+
+ggplot(tick_counts, aes(x = reserve, y = count))+
+  geom_histogram(stat = "identity") +
+  facet_wrap(~ month) +
+  labs(y = "Tick Counts",x =  "Reserve", 
+       title = "Tick counts by month & reserve",
+       fill = "Life Stage") +
+  scale_x_discrete(limits = rev(levels(tick_counts$reserve))) +
+  scale_fill_manual(values = cal_palette("collinsia", n = 2, type = "continuous"))+
+  coord_flip() +
+  theme_bw() +
+  theme(legend.position = "bottom")
+ggsave("TickCount_ReserveMonth_rough.jpeg", dpi = 320)
+```
+
+summary
+```{r}
+# tick_counts <- aggregate(count ~ reserve + month + guess, data = prelim, FUN = sum)
+
+library(dplyr)
+library(tangram)
+install.packages("purrrlyr")
+library(purrrlyr)
+library(gtsummary)
+library(gt)
+
+
+webshot::install_phantomjs()
+tick_counts2 <- prelim %>%
+  select(reserve,count) %>%
+  tbl_summary() %>%
+  modify_header(label ~ "**Tick Counts by Reserve**") %>%
+  as_gt() %>%
+  gt::gtsave(filename = "count_table.png")
+
 
 ```
+
 
 
 
@@ -54,7 +134,7 @@ ggplot(prelim, aes(y = genus, x = month, fill = life_stage )) +
 liz <- read_csv("Mathias2021_FieldData_Lizard - Sheet1.csv")
 dim(liz)
 
-names(liz) <- c('reserve', 'round', 'date', 'liz', 'burden', 'site')
+names(liz) <- c('reserve', 'round', 'date', 'liz', 'field_burden', 'site',"burden")
 
 liz$round <- as.factor(liz$round)
 
@@ -107,27 +187,166 @@ liz$month <- liz$date
 liz$month[liz$round == "2"] <- "March"
 liz$month[liz$round == "3"] <- "April"
 liz$month[liz$round == "4"] <- "May"
+liz$month[liz$round == "5"] <- "June"
 
 liz$month <- factor(liz$month, 
-                    levels = c("March", "April", "May"))
+                    levels = c("March", "April", "May", "June"))
 
 liz$region <- factor(liz$region, 
                      levels = c("northern", "central", "southern"))
 
+
+regioncolor = c('brown1','tan1','lightgoldenrod1')
+locationcolor = c('darkseagreen1', 'brown')
 ```
 
+
+
 ```{r}
-ggplot(liz, aes(x = month, y = log(burden))) +
+
+## ALL
+ggplot(liz, aes(x = month, y = log(burden + 1))) +
   geom_boxplot() +
-  geom_jitter(aes(color = reserve), alpha = .5) +
+  geom_jitter(aes(color = reserve), alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Month",y =  "log(burden + 1)", title = "Lizard burdens across all sites" ) +
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  theme_classic() 
+ggsave("LizBurdens_All.jpeg", dpi = 320)
+
+
+## Region
+
+ggplot(liz, aes(x = month, y = log(burden + 1)), color = region) +
+  geom_boxplot() +
+  geom_jitter(aes(color = region), alpha = .7, width = .1) +
+  scale_color_manual(values = c('brown1','tan1','lightgoldenrod1'))+
+  labs(x = "Month",y =  "log(burden + 1)", title = "Lizard burdens across regions" ) +
+    theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+ggsave("LizBurdens_Regions.jpeg", dpi = 320)
+
+## LOCATION
+
+ggplot(liz, aes(x = month, y = log(burden + 1))) +
+  geom_boxplot() +
+  geom_jitter(aes(color = location), alpha = .7, width = .1) +
+  scale_color_manual(values = c('darkseagreen1', 'brown'))+
+  labs(x = "Month",y =  "log(burden + 1)", title = "Lizard burdens across locations" ) +
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+ggsave("LizBurdens_Location.jpeg", dpi = 320)
+```
+
+Show these plots
+```{r warning = FALSE}
+##### Lizard burden
+
+
+## ALL
+ggplot(liz, aes(x = month, y = log(burden + 1))) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Month",y =  "log(burden + 1)", title = "Lizard burdens across all sites" ) +
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  theme_bw() 
+#ggsave("LizBurdens_All.jpeg", dpi = 320)
+
+
+## by region
+ggplot(liz, aes(x = region, y = log(burden + 1)), color = region) +
+  geom_boxplot() +
+  facet_wrap(~ month) +
+  geom_jitter(aes(color = reserve),alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  #scale_color_manual(values = c('brown1','tan1','lightgoldenrod1'))+
+  labs(x = "Region",y =  "log(burden + 1)", title = "Lizard burdens across regions" ) +
+    theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  theme_bw() +
+  theme(legend.position = "none")
+  # theme(legend.position = "bottom")
+ggsave("LizBurdens_RegionsFacet_v2.jpeg", dpi = 320)
+
+
+## by location
+ggplot(liz, aes(x = location, y = log(burden + 1)), color = region) +
+  geom_boxplot() +
+  facet_wrap(~ month) +
+  geom_jitter(aes(color = reserve),alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  #scale_color_manual(values = c('brown1','tan1','lightgoldenrod1'))+
+  labs(x = "Location",y =  "log(burden + 1)", title = "Lizard burdens across locations" ) +
+    theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  theme_bw() +
+  theme(legend.position = "none")
+  # theme(legend.position = "bottom")
+ggsave("LizBurdens_LocationFacet_v2.jpeg", dpi = 320)
+
+
+liz_counts <-liz %>%
+  group_by(reserve, month) %>%
+  summarise(freq = length(liz), .groups = 'drop')
+
+ggplot(liz_counts, aes(y = freq, x = reserve, fill = month)) +
+  geom_histogram(stat = "identity")+
+  labs(y = "Counts of Lizards",x =  "Reserve", 
+       title = "Lizard counts by month & reserve",
+       fill = "Month") +
+  scale_x_discrete(limits = rev(levels(liz_counts$reserve))) +
+  scale_fill_manual(values = cal_palette("oak", n = 3, type = "continuous"))+
+  coord_flip() +
+  theme_bw() 
+#ggsave("LizNumbers_ReserveMonth.jpeg", dpi = 320)
+```
+
+
+```{r}
+
+
+
+ggplot(liz, aes(x = month, y = log(burden), fill = reserve)) +
+  geom_boxplot() +
+  geom_jitter(alpha = .5) +
+  scale_fill_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
   theme_classic()
 
-ggplot(liz, aes(x = month, y = log(burden))) +
+library(ggthemes)
+
+ggplot(liz, aes(x = month, y = log(burden), fill = reserve)) +
+  geom_boxplot() +
+  geom_jitter(alpha = .5) +
+  #scale_color_calc()
+  scale_color_continuous_tableau()+
+  theme_classic()
+
+
+
+```
+
+
+
+```{r}
+ggplot(liz, aes(x = month, y = log(burden + 1))) +
   geom_boxplot() +
   facet_wrap(~reserve) +
   theme_classic()
 
-ggplot(liz, aes(x = month, y = log(burden))) +
+ggplot(liz, aes(x = month, y = log(burden + 1))) +
   geom_boxplot() +
   facet_wrap(~region, scale = "free_y",ncol = 1) +
   geom_jitter(aes(color = reserve))+
@@ -147,6 +366,7 @@ liz$julian <- format(liz$julian, "%j")
 liz$julian <- as.numeric(liz$julian)
 ggplot(liz, aes(x = julian, y = log(burden +1 ), color = location))+
   geom_point() +
+    scale_color_manual(values = c('darkseagreen4', "tan"))+
   geom_smooth(se = FALSE)
 
 ggplot(liz, aes(x = julian, y = burden, color = reserve)) +
@@ -202,7 +422,7 @@ burdens_site$reserve <- factor(burdens_site$reserve,
                                  "Stunt Ranch", "Santa Cruz Island"))
 
 
-
+aggregate(burden~ month, data = liz, FUN = sum)
 
 burdens_month <-aggregate(burden ~ month + region, data = liz, FUN = sum)
 
@@ -221,7 +441,12 @@ ggplot(burdens_month, aes(y = burden, x = month)) +
 ggplot(liz, aes(x = month, y = log(burden + 1))) +
   geom_boxplot() +
   facet_wrap(~reserve)
+
 ```
+devtools::install_github("awhstin/awtools")
+
+look into tuquoise.pal
+
 
 ```{r}
 library(car)
@@ -284,15 +509,19 @@ ggplot(liz, aes(y = log(burden + 1), x = location)) +
   theme(legend.text = element_text(size = 5))
 
 
+liz %>%
+  group_by(month) %>%
+  summarise(freq = length(liz), .groups = 'drop')
+
 liz_counts <-liz %>%
   group_by(reserve, month) %>%
   summarise(freq = length(liz), .groups = 'drop')
 
-ggplot(liz_counts, aes(y = freq, x = reserve,fill = month)) +
-  geom_histogram(stat = "identity") +
+ggplot(liz_counts, aes(y = freq, x = reserve, fill = month)) +
+  geom_histogram(stat = "identity")+
+  scale_x_discrete(limits = rev(levels(liz_counts$reserve))) +
   coord_flip()
-  theme(axis.text.x = element_text(size = 5)) +
-    coord_flip()
+
   
 liz_counts_region <-liz %>%
   group_by(region, month) %>%
@@ -303,6 +532,7 @@ ggplot(liz_counts_region, aes(y = freq, x = region,fill = month)) +
   coord_flip()
   theme(axis.text.x = element_text(size = 5)) +
     coord_flip()
+
 
 
 ```
