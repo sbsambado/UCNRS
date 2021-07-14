@@ -1,0 +1,333 @@
+---
+title: "mathias_lizard_finalcounts"
+author: "sbsambado"
+date: "7/13/2021"
+output: html_document
+---
+### Lizard data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+library(tidyverse)
+library(ggplot2)
+
+library(devtools)
+devtools::install_github("an-bui/calecopal")
+library(calecopal)
+names(cal_palettes)
+
+```
+
+Data cleaning
+
+lizard long
+```{r}
+
+liz <- read_csv("Mathias2021_FieldData_Lizard - Sheet1.csv")
+dim(liz)
+
+names(liz) <- c('reserve', 'round', 'date', 'site', 'liz', 'burden','l_final', 'n_final', 'lab_l', 'lab_n', 'lab_dc_l', 'lab_dc_n', 'field_count', 'terms')
+
+liz$round <- as.factor(liz$round)
+
+
+liz$region <- liz$reserve
+
+liz$region[liz$reserve == "McLaughlin"] <- "northern"
+liz$region[liz$reserve == "Quail Ridge"] <- "northern"
+liz$region[liz$reserve == "Point Reyes"] <- "northern"
+
+liz$region[liz$reserve == "Fort Ord"] <- "central"
+liz$region[liz$reserve == "Hastings"] <- "central"
+liz$region[liz$reserve == "Big Creek"] <- "central"
+liz$region[liz$reserve == "Rancho Marino"] <- "central"
+
+liz$region[liz$reserve == "Sedgwick"] <- "southern"
+liz$region[liz$reserve == "Coal Oil Point"] <- "southern"
+liz$region[liz$reserve == "Stunt Ranch"] <- "southern"
+liz$region[liz$reserve == "Santa Cruz Island"] <- "southern"
+
+
+liz$reserve <- factor(liz$reserve,
+                      levels = c("McLaughlin", "Quail Ridge", "Point Reyes",
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", "Coal Oil Point",
+                                 "Stunt Ranch", "Santa Cruz Island"))
+
+
+
+liz$location <- liz$region
+
+liz$location[liz$reserve == "McLaughlin"] <- "inland"
+liz$location[liz$reserve == "Quail Ridge"] <- "inland"
+liz$location[liz$reserve == "Point Reyes"] <- "coastal"
+
+liz$location[liz$reserve == "Fort Ord"] <- "coastal"
+liz$location[liz$reserve == "Hastings"] <- "inland"
+liz$location[liz$reserve == "Big Creek"] <- "coastal"
+liz$location[liz$reserve == "Rancho Marino"] <- "coastal"
+
+liz$location[liz$reserve == "Sedgwick"] <- "inland"
+liz$location[liz$reserve == "Coal Oil Point"] <- "coastal"
+liz$location[liz$reserve == "Stunt Ranch"] <- "inland"
+liz$location[liz$reserve == "Santa Cruz Island"] <- "inland"
+
+
+liz$month <- liz$date
+
+liz$month[liz$round == "2"] <- "March"
+liz$month[liz$round == "3"] <- "April"
+liz$month[liz$round == "4"] <- "May"
+liz$month[liz$round == "5"] <- "June"
+
+liz$month <- factor(liz$month, 
+                    levels = c("March", "April", "May", "June"))
+
+liz$region <- factor(liz$region, 
+                     levels = c("northern", "central", "southern"))
+
+
+regioncolor = c('brown1','tan1','lightgoldenrod1')
+locationcolor = c('darkseagreen1', 'brown')
+
+# remove NA from month
+liz <- subset(liz, !is.na(month))
+```
+
+
+EDA
+```{r}
+
+# total burden
+ggplot(liz, aes(x = month, y = log(burden + 1))) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Month",y =  "log(burden + 1)", title = "Lizard burdens across all sites" ) +
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  theme_classic() 
+
+
+# larval burden
+ggplot(liz, aes(x = month, y = log(l_final + 1))) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Month",y =  "log(burden + 1)", title = "Lizard burdens across all sites" ) +
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  theme_classic() 
+
+
+# nymphal burden
+ggplot(liz, aes(x = month, y = log(n_final + 1))) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Month",y =  "log(burden + 1)", title = "Lizard burdens across all sites" ) +
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 6),
+        axis.title.x = element_text(size = 7)) +
+  theme_classic() 
+
+
+
+```
+
+density
+```{r}
+library(ggridges)
+
+ggplot(liz, aes(x = log(l_final + 1), y = factor(month))) +
+    geom_density_ridges(fill = "gray90") +
+   labs(x = "Larval count", y = "Month")
+
+ggplot(liz, aes(x = log(n_final + 1), y = factor(month))) +
+    geom_density_ridges(fill = "gray90") +
+   labs(x = "Nymphal count", y = "Month")
+
+```
+
+lizard tidy
+
+data cleaning
+```{r}
+liz_tidy <- read_csv("Mathias2021_FieldData_Lizard - lizard_tidy.csv")
+dim(liz_tidy)
+
+names(liz_tidy) <- c('reserve', 'round', 'date', 'liz_num', 'count','lifestage')
+
+liz_tidy$round <- as.factor(liz_tidy$round)
+
+
+liz_tidy$region <- liz_tidy$reserve
+
+liz_tidy$region[liz_tidy$reserve == "McLaughlin"] <- "northern"
+liz_tidy$region[liz_tidy$reserve == "Quail Ridge"] <- "northern"
+liz_tidy$region[liz_tidy$reserve == "Point Reyes"] <- "northern"
+
+liz_tidy$region[liz_tidy$reserve == "Fort Ord"] <- "central"
+liz_tidy$region[liz_tidy$reserve == "Hastings"] <- "central"
+liz_tidy$region[liz_tidy$reserve == "Big Creek"] <- "central"
+liz_tidy$region[liz_tidy$reserve == "Rancho Marino"] <- "central"
+
+liz_tidy$region[liz_tidy$reserve == "Sedgwick"] <- "southern"
+liz_tidy$region[liz_tidy$reserve == "Coal Oil Point"] <- "southern"
+liz_tidy$region[liz_tidy$reserve == "Stunt Ranch"] <- "southern"
+liz_tidy$region[liz_tidy$reserve == "Santa Cruz Island"] <- "southern"
+
+
+liz_tidy$reserve <- factor(liz_tidy$reserve,
+                      levels = c("McLaughlin", "Quail Ridge", "Point Reyes",
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", "Coal Oil Point",
+                                 "Stunt Ranch", "Santa Cruz Island"))
+
+
+
+liz_tidy$location <- liz_tidy$region
+
+liz_tidy$location[liz_tidy$reserve == "McLaughlin"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Quail Ridge"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Point Reyes"] <- "coastal"
+
+liz_tidy$location[liz_tidy$reserve == "Fort Ord"] <- "coastal"
+liz_tidy$location[liz_tidy$reserve == "Hastings"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Big Creek"] <- "coastal"
+liz_tidy$location[liz_tidy$reserve == "Rancho Marino"] <- "coastal"
+
+liz_tidy$location[liz_tidy$reserve == "Sedgwick"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Coal Oil Point"] <- "coastal"
+liz_tidy$location[liz_tidy$reserve == "Stunt Ranch"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Santa Cruz Island"] <- "inland"
+
+
+liz_tidy$month <- liz_tidy$date
+
+liz_tidy$month[liz_tidy$round == "2"] <- "March"
+liz_tidy$month[liz_tidy$round == "3"] <- "April"
+liz_tidy$month[liz_tidy$round == "4"] <- "May"
+liz_tidy$month[liz_tidy$round == "5"] <- "June"
+
+liz_tidy$month <- factor(liz_tidy$month, 
+                    levels = c("March", "April", "May", "June"))
+
+liz_tidy$region <- factor(liz_tidy$region, 
+                     levels = c("northern", "central", "southern"))
+
+
+regioncolor = c('brown1','tan1','lightgoldenrod1')
+locationcolor = c('darkseagreen1', 'brown')
+
+
+
+
+```
+
+
+```{r}
+library(tidyverse)
+# remove NA from month
+liz_tidy <- subset(liz_tidy, !is.na(month))
+
+# ## only plot extreme season using dplyr from the tidyverse
+# ggplot(data = filter(liz_tidy, lifestage %in% c("larval", "nymphal")),
+#          aes(y = month, x = log(count +1 ), fill = paste(month, lifestage))) +
+#   geom_density_ridges(alpha = .7, rel_min_height = .01,
+#                       color = "white", from = -1, to = 5) +
+#   #scale_fill_cyclical(breaks = c("1997 Summer", "1997 Winter"),
+#                       #labels = c(`1997 Summer` = "Summer",
+#                                #  `1997 Winter` = "Winter"),
+#                       #values = c("tomato", "dodgerblue"),
+#                      # name = "Season:", guide = "legend") +
+#   #theme_ridges(grid = FALSE) +
+#   labs(x = "Tick counts", y = "Month")
+
+ggplot(data = filter(liz_tidy, lifestage %in% c("larval", "nymphal")),
+         aes(y = month, x = log(count +1), fill = paste(lifestage))) +
+  facet_wrap(~reserve) +
+  geom_density_ridges(alpha = .7, rel_min_height = .01,
+                      color = "white", from = -1, to = 5) +
+  scale_fill_cyclical(breaks = c("larval", "nymphal"),
+                      labels = c(`larval` = "larval",
+                                 `nymphal` = "nymphal"),
+                      values = c("tomato", "dodgerblue"),
+                      name = "Lifestage:", guide = "legend") +
+  theme_ridges(grid = FALSE) +
+  labs(x = "Tick counts", y = "Month")
+
+liz_tidy_select <- liz_tidy[which(liz_tidy$reserve == "Fort Ord" |
+                                  liz_tidy$reserve == "Hastings" |
+                                  liz_tidy$reserve == "Big Creek" |
+                                  liz_tidy$reserve == "Rancho Marino" |
+                                  liz_tidy$reserve == "Sedgwick"),]
+
+
+ggplot(data = filter(liz_tidy_select, lifestage %in% c("larval", "nymphal")),
+         aes(y = month, x = log(count +1), fill = paste(lifestage))) +
+  facet_wrap(~reserve) +
+  geom_density_ridges(alpha = .7, rel_min_height = .01,
+                      color = "white", from = -1, to = 5) +
+  scale_fill_cyclical(breaks = c("larval", "nymphal"),
+                      labels = c(`larval` = "larval",
+                                 `nymphal` = "nymphal"),
+                      values = c("tomato", "dodgerblue"),
+                      name = "Lifestage:", guide = "legend") +
+  theme_ridges(grid = FALSE) +
+  labs(x = "Tick counts", y = "Month")
+
+
+```
+
+```{r}
+
+liz_tidy$count <- as.numeric(liz_tidy$count)
+liz_tidy$month <- as.numeric(liz_tidy$month)
+li
+ggplot(liz_tidy, aes(y = count, x = month, group = lifestage, fill = lifestage)) +
+  geom_smooth()
+
+str(liz_tidy)
+liz_tidy$julian <- as.Date(liz_tidy$date, format = "%m/%d/%y")
+liz_tidy$julian <- format(liz_tidy$julian, "%j")
+liz_tidy$week <- round(as.numeric(liz_tidy$julian)/6)
+
+
+ ggplot(liz_tidy, aes(y = log(count+1), x = julian, group = lifestage, fill = lifestage)) +
+  stat_smooth(geom = 'area', method = 'loess', span = .2, alpha = .9)+
+ #facet_wrap(~ reserve, scale = 'free_y', ncol = 1)+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 0, size = 10, vjust = 0.5))+
+  labs(y = 'Log(tick counts)', x = 'Julian Date')+
+  theme(strip.background = element_rect(fill = 'gray95'))+
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11))+
+  scale_fill_manual(values = c('#6096c8', '#ffcc00'))+
+  labs(fill = "Life stage")+
+    theme(legend.title = element_text(size = 7),legend.text = element_text(size = 7))+
+    theme(legend.position = c(.067, .940), legend.text = element_text(face = "bold"),
+    legend.title = element_text(face = "bold")) +
+  theme(axis.text.x = element_text(angle = 90, size = 4, vjust = 0.5))
+```
+
+```{r}
+ggplot(liz_tidy, aes(x = month, y = log(count +1) )) +
+  geom_boxplot(fill = "gray91") +
+  geom_jitter(alpha = .7, width = .1) +
+  facet_wrap(~lifestage, ncol = 1) +
+  labs(y = "Log(tick burdens + 1", x = "Month") +
+  #theme(axis.text.x = element_text(angle = 90, size = 4, vjust = 0.5)) +
+  theme_minimal() +
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11))
+```
+
