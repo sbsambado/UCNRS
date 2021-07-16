@@ -300,7 +300,7 @@ ggsave("LizBurdens_LocationFacet_v2.jpeg", dpi = 320)
 
 
 liz_counts <-liz %>%
-  group_by(reserve, month) %>%
+  group_by(reserve), round) %>%
   summarise(freq = length(liz), .groups = 'drop')
 
 ggplot(liz_counts, aes(y = freq, x = reserve, fill = month)) +
@@ -443,6 +443,8 @@ ggplot(liz, aes(x = month, y = log(burden + 1))) +
   geom_boxplot() +
   facet_wrap(~reserve)
 
+
+aggregate(liz ~ reserve, data = liz, FUN = sum)
 ```
 devtools::install_github("awhstin/awtools")
 

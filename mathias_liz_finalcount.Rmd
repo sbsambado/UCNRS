@@ -226,9 +226,16 @@ liz_tidy$region <- factor(liz_tidy$region,
 regioncolor = c('brown1','tan1','lightgoldenrod1')
 locationcolor = c('darkseagreen1', 'brown')
 
+liz_tidy$julian <- liz_tidy$date
+liz_tidy$julian <- mdy(liz_tidy$date)
 
+#liz_tidy$julian <- as.Date("%m/%d/%y", format = "%m/%d/%Y")
 
+liz_tidy$julian <- format(liz_tidy$julian, "%j")
 
+liz_tidy$julian <- as.numeric(liz_tidy$julian)
+
+liz_tidy$week <- round(liz_tidy$julian/7)
 ```
 
 
@@ -290,21 +297,26 @@ ggplot(data = filter(liz_tidy_select, lifestage %in% c("larval", "nymphal")),
 
 liz_tidy$count <- as.numeric(liz_tidy$count)
 liz_tidy$month <- as.numeric(liz_tidy$month)
-li
+
 ggplot(liz_tidy, aes(y = count, x = month, group = lifestage, fill = lifestage)) +
-  geom_smooth()
+  geom_smooth(se = FALSE, aes(color = lifestage)) +
+  facet_wrap(~location, ncol = 1)
+
+
+ggplot(liz_tidy, aes(y = count, x = month, group = lifestage, fill = lifestage)) +
+  geom_smooth() 
 
 str(liz_tidy)
 liz_tidy$julian <- as.Date(liz_tidy$date, format = "%m/%d/%y")
 liz_tidy$julian <- format(liz_tidy$julian, "%j")
-liz_tidy$week <- round(as.numeric(liz_tidy$julian)/6)
+liz_tidy$week <- round(as.numeric(liz_tidy$julian)/7)
 
 
  ggplot(liz_tidy, aes(y = log(count+1), x = julian, group = lifestage, fill = lifestage)) +
   stat_smooth(geom = 'area', method = 'loess', span = .2, alpha = .9)+
  #facet_wrap(~ reserve, scale = 'free_y', ncol = 1)+
   theme_minimal()+
-  theme(axis.text.x = element_text(angle = 0, size = 10, vjust = 0.5))+
+  theme(axis.text.x = element_text(angle = 90, size = 10, vjust = 0.5))+
   labs(y = 'Log(tick counts)', x = 'Julian Date')+
   theme(strip.background = element_rect(fill = 'gray95'))+
   theme(strip.text.x = element_text(face = 'bold')) +
@@ -314,8 +326,9 @@ liz_tidy$week <- round(as.numeric(liz_tidy$julian)/6)
   labs(fill = "Life stage")+
     theme(legend.title = element_text(size = 7),legend.text = element_text(size = 7))+
     theme(legend.position = c(.067, .940), legend.text = element_text(face = "bold"),
-    legend.title = element_text(face = "bold")) +
-  theme(axis.text.x = element_text(angle = 90, size = 4, vjust = 0.5))
+    legend.title = element_text(face = "bold")) 
+ 
+ 
 ```
 
 ```{r}
@@ -329,5 +342,430 @@ ggplot(liz_tidy, aes(x = month, y = log(count +1) )) +
   theme(strip.text.x = element_text(face = 'bold')) +
   theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
   theme(axis.title.x =  element_text(face = 'bold',size = 11))
+```
+
+```{r}
+
+liz$ratio <- liz$l_final/liz$n_final
+
+liz$ratio_n <- liz$n_final/liz$burden #nymphs /total 2/6 = .33 3/6 = .5
+liz$ratio_l <- liz$l_final/liz$burden # larva /total
+
+# so higher the ratio higher the amount of that life stage
+
+# .5 means equal L to N so more overlap
+# high/low  number means less overlap
+ggplot(liz, aes(x = month, y = ratio_l)) +
+  geom_point() +
+  geom_boxplot() + # so May is higher ratio of l 
+  geom_hline(yintercept = .5, color = "red", size = 2)
+ 
+
+ggplot(liz, aes(x = month, y = ratio_n)) +
+  geom_point() +
+  geom_boxplot() +
+  geom_hline(yintercept = .5, color = "red", size = 2)
+ 
+
+## ratio
+
+ggplot(liz, aes(x = reserve, y = ratio)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, size = 4, vjust = 0.5)) +
+  geom_boxplot()
+
+ggplot(liz, aes(x = reserve, y = ratio)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, size = 4, vjust = 0.5)) +
+  geom_boxplot() 
+
+ggplot(liz, aes(x = month, y = ratio)) +
+  geom_point() +
+  geom_boxplot() 
+
+
+ggplot(liz, aes(x = reserve, y = ratio)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, size = 4, vjust = 0.5)) +
+  geom_boxplot()
+
+ggplot(liz, aes(x = reserve, y = ratio)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle = 90, size = 4, vjust = 0.5)) +
+  geom_boxplot() 
+
+
+```
+
+```{r}
+
+liz_tidy_select
+ggplot(liz_tidy_select, aes(y = reserve, x = count)) +
+  geom_boxplot(fill = 'grey89') +
+  geom_point() +
+  facet_wrap(~lifestage, ncol = 1) +
+  #scale_y_discrete(limits = rev(levels(liz_tidy_select$reserve)))+
+  theme_minimal()
+
+
+ggplot(liz_tidy, aes(y = reserve, x = count)) +
+  geom_boxplot(fill = 'grey89') +
+  geom_point(alpha = .4) +
+  facet_wrap(~lifestage, ncol = 1) +
+  scale_y_discrete(limits = rev(levels(liz_tidy$reserve))) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(data = liz_tidy, aes(x = month, y = count, group = lifestage)) +
+  geom_line(aes(color = lifestage)) +
+  facet_wrap(~ region, 
+             ncol = 1, 
+             scales = "free", 
+             strip.position = "right") +
+  theme_classic()
+
+liz_tidy_sum <- aggregate(count ~ month + location + lifestage, data = liz_tidy, FUN = mean)
+
+
+ggplot(data = liz_tidy_sum, aes(x = month, y = count, group = lifestage)) +
+  geom_line(aes(color = lifestage), size = 3) +
+  facet_wrap(~ location, 
+             ncol = 1, 
+             scales = "free", 
+             strip.position = "right") +
+  theme_classic()
+
+
+liz_tidy_sum_region <- aggregate(count ~ month  + region + lifestage, data = liz_tidy, FUN = mean)
+
+
+ggplot(data = liz_tidy_sum_region, aes(x = month, y = count, group = lifestage)) +
+  geom_line(aes(color = lifestage), size = 3) +
+  facet_wrap(~ region, 
+             ncol = 1, 
+             scales = "free", 
+             strip.position = "right") +
+  theme_classic()
+```
+
+```{r}
+# For general stuff:
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(here)
+library(paletteer)
+
+# For ts stuff: 
+library(tsibble)
+library(fable)
+library(fabletools)
+library(feasts)
+library(forecast)
+
+# For spatial stuff: 
+library(sf)
+library(tmap)
+library(mapview)
+
+
+liz_tidy_l <- liz_tidy %>%
+  filter(lifestage == "larval")
+
+# liz_tidy_l %>% gg_subseries(count)
+# 
+# hydro_quarterly <- liz_tidy %>% 
+#   index_by(year_mo = ~ yearmonth(.)) %>% # monthly aggregates
+#   summarise(
+#     avg_consumption = mean(count)
+#   )
+
+# liz_tidy_sum_region <- aggregate(count ~ week  + region + lifestage, data = liz_tidy, FUN = sum)
+# 
+# ggplot(data = liz_tidy_sum_region, aes(x = week, y = count, group = lifestage)) +
+#   geom_line(color = "darkorange") +
+#   facet_wrap(~lifestage, ncol = 1) +
+#   geom_smooth(color = "purple",
+#               size = 0.2,
+#               linetype = "dashed",
+#               fill = "purple",
+#               alpha = 0.2) +
+#   theme_minimal()
+# 
+# 
+# sum <- aggregate(count ~ julian + region, data = liz_tidy, FUN = sum)
+# hydro_model <- sum %>%
+#   model(
+#     arima = ARIMA(count),
+#     ets = ETS(count)
+#   ) %>%
+#   fabletools::forecast(h = "2 years")
+# 
+# hydro_model %>% 
+#   autoplot(filter(hydro_ts, 
+#                   year(month_sep) > 2010), 
+#            level = NULL)
+
+
+
+```
+PRISM
+>[Download and plot PRISM](https://cran.r-project.org/web/packages/prism/vignettes/prism.html#downloading-data)
+
+```{r}
+# install.packages("prism")
+library(prism)
+prism_set_dl_dir("~/Users/samanthasambado/Desktop/R Script/UCNRS/prismtmp")
+
+
+get_prism_dailys(
+  type = "tmean", 
+  minDate = "2020-12-01", 
+  maxDate = "2021-07-01", 
+  keepZip = FALSE
+)
+get_prism_monthlys(type = "tmean", year = 2019:2021, mon = 1, keepZip = FALSE)
+get_prism_annual("ppt", years = 2019:2021, keepZip = FALSE)
+```
+
+nteract with the archive and prism data
+You can view all the prism data you have downloaded with a simple command: prism_archive_ls(). This function gives a list of folder names, i.e., prism data (pd). All the functions in the prism package work off of one or more of these folder names (pd).
+
+```{r}
+## Truncated to keep file list short
+prism_archive_ls()
+
+
+# While prism functions use this folder format, other files may need an absolute path (e.g. the raster package). The pd_to_file() function conveniently returns the absolute path. Alternatively, you may want to see what the normal name for the product is (not the file name), and we can get that with the pd_get_name() function.
+
+## Truncated to keep file list short
+pd_to_file(prism_archive_ls())
+
+pd_get_name(prism_archive_ls())
+```
+
+Finally, prism_archive_subset() is a convenient way to search for specific parameters, time steps, days, months, years, or ranges of days, months, years.
+```{r}
+# we know we have downloaded June 2021 daily data, so lets search for those 
+prism_archive_subset("tmean", "daily", mon = 6)
+
+# or we can look for days between June 7 and June 10
+prism_archive_subset(
+  "tmean", "daily", minDate = "2021-06-01", maxDate = "2021-06-10"
+)
+```
+
+Raster plots
+You can easily make a quick plot of your data using the output of prism_archive_ls() or prism_archive_subset() with pd_image().
+
+```{r}
+# Plot the January 30-year average temperatures
+# grab only the first value, just in case multiple values are returned
+
+# jmean <- prism_archive_subset(
+#   "tmean", "monthly normals", mon = 1, resolution = "4km")
+# pd_image(jmean)
+
+```
+
+```{r}
+# library(raster)
+
+jnorm <- prism_archive_subset(
+  "tmean", "monthly normals", mon = 1, resolution = "4km")
+j2021 <- prism_archive_subset("tmean", "monthly", years = 2021, mon = 1)
+
+
+# raster needs a full path, not the "short" prism data name
+jnorm <- pd_to_file(jnorm)
+
+j2021 <- pd_to_file(j2021)
+
+## Now we'll load the rasters.
+jnorm_rast <- raster(jnorm)
+j2021_rast <- raster(j2021)
+
+# Now we can do simple subtraction to get the anomaly by subtracting 2014 
+# from the 30 year normal map
+anomCalc <- function(x, y) {
+  return(x - y)
+}
+
+anom_rast <- raster::overlay(j2021_rast,jnorm_rast,fun = anomCalc)
+
+plot(anom_rast)
+```
+
+```{r}
+library(ggplot2)
+# data already exist in the prism dl dir
+boulder <- c(-105.2797, 40.0176)
+
+# prism_archive_subset() will return prism data that matches the specified 
+# variable, time step, years, months, days, etc.
+to_slice <- prism_archive_subset("tmean", "monthly", mon = 1)
+p <- pd_plot_slice(to_slice, boulder)
+
+# add a linear average and title
+p + 
+  stat_smooth(method="lm", se = FALSE) + 
+  theme_bw() + 
+  ggtitle("Average January temperature in Boulder, CO 1982-2014")
+#> `geom_smooth()` using formula 'y ~ x'
+```
+
+```{r}
+library(leaflet)
+library(raster)
+library(prism)
+
+# 30-year normal average temperature have already been downloaded for 
+norm <- prism_archive_subset(
+  "tmean", "monthly normals", resolution = "4km"
+)
+rast <- raster(pd_to_file(norm))
+
+# Create color palette and plot
+pal <- colorNumeric(
+  c("#0000FF", "#FFFF00", "#FF0000"), 
+  values(rast),
+  na.color = "transparent"
+)
+
+leaflet() %>% 
+  addTiles(
+    urlTemplate = 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+  ) %>% 
+  addRasterImage(rast, colors = pal, opacity=.65) %>% 
+  addLegend(pal = pal, values = values(rast), title = "Deg C")
+```
+
+>[R pubs prism](https://rpubs.com/collnell/get_prism)
+
+```{r}
+library(devtools) #needed to download prism from github
+library(reshape2) ##melting dataframes
+library(dplyr) #data wrangling
+library(raster) ##working with raster data
+library(sp) ##manipulationg spatial data
+
+#install_github(repo = "prism", username = "ropensci")
+library(prism) ##prism data access
+
+
+#get_prism_monthlys(type = 'ppt', years=1990:2016, mon = 7, keepZip = TRUE)
+#ls_prism_data(name=TRUE)
+
+new_file<-c(1) ##change to corresponding file numbers
+RS <- prism_stack(ls_prism_data()[new_file,1]) ##raster file
+to_slice <- grep("_201607",RS[,1],value=T)##search through names
+
+
+df <- data.frame(rasterToPoints(RS)) ##creates a dataframe of points
+month.df <- melt(df, c("x", "y"))
+names(month.df)[1:2] <- c("lon", "lat") #rename columns
+
+
+library(ggplot2) #plotting
+library(ggmap) ##theme_nothing()
+
+ggplot()+
+  geom_raster(data=month.df, aes(x=lon, y=lat, fill=value))+
+  theme_nothing(legend = TRUE)+
+  scale_fill_gradient2("Precipitation\n(inches)", low='red',mid='lightblue',high = 'darkslateblue', midpoint=100)+
+  labs(title="July Precipitation: 30-year normals")+coord_fixed(ratio=1.3)
+
+
+```
+
+Filter data to southern California
+SoCal is located approximately between 31 & 36 degrees latitude and -124 & -114 longitude.
+
+```{r}
+minLat=31
+maxLat=36
+minLon=-124
+maxLon=-114
+
+month.df.socal<-month.df%>%
+  filter(minLat < lat, lat < maxLat, minLon < lon, lon <maxLon)%>%
+  mutate(ppt = value) %>%
+  select(-value)
+
+dim(month.df)
+dim(month.df.socal)
+```
+
+Filter data to 2020
+```{r}
+month.df.socal$variable<-as.character(month.df.socal$variable)
+july2020<-filter(month.df.socal, grepl(pattern = '2020', variable, fixed=TRUE))
+
+
+ggplot()+
+  geom_raster(data=july2020, aes(x=lon, y=lat, fill=ppt))+
+  theme_nothing(legend = TRUE)+
+  scale_fill_gradient2("Precipitation\n(inches)", low='red',mid='lightblue',high = 'darkslateblue', midpoint=100)+
+  labs(title="July Precipitation: 2016")+coord_fixed(ratio=1.3)
+
+
+cities<-data.frame(cities =c('Irvine','LA', 'SD', 'Palm Springs'),
+                   Lat = c(33.6694649, 34.0522342, 32.7153292, 33.8302961),
+                   Long = c(-117.8231107, -118.2436849, -117.1572551, -116.5452921))
+
+cities.spdf<-SpatialPointsDataFrame(coords=cities[,c('Long','Lat')], 
+                       data=cities, proj4string = CRS("+proj=longlat +ellps=WGS84 +no_defs"))
+
+city.clim<-extract(RS, cities.spdf,  fun=mean, na.rm=TRUE, sp=TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(sf)
+library(raster)
+library(prism)
+# 
+
+county <- st_read("cb_2018_us_county_20m.shp")
+
+
+county <- county %>%
+  mutate(state = as.numeric(as.character(STATEFP)),
+         fips = as.numeric(as.character(GEOID))) %>%
+  filter(state != 2, state != 15, state < 60)
+
+st_crs(county)
+
+
+ggplot(data = county) +
+  geom_sf(fill = NA)
+
+
+options(prism.path = ".")
+get_prism_normals(type = 'ppt', resolution = '4km', annual = T, keepZip = TRUE)
+prism_archive_ls()
+prism_p30 <- pd_stack(prism_archive_ls()[1]) 
+county_wgs84 <- st_transform(county, crs(prism_p30))
+st_crs(county_wgs84)
+cnty_ras <- rasterize(county_wgs84, prism_p30, field = "fips")
+cnty_p30 <- zonal(prism_p30, cnty_ras, fun = "mean")
+
+cnty_p30 <- data.frame(cnty_p30)
+summary(cnty_p30)
+
+cnty_join1 <- left_join(county_wgs84, cnty_p30, 
+                        by = c("fips" = "zone"))
+
+ggplot(data = cnty_join1) +
+  geom_sf(aes(fill = value)) +
+  scale_fill_continuous(name = "Precip (mm)")
+
+
+ca_join1 <- filter(cnty_join1, STATEFP == "06")
+
+ggplot(data = ca_join1) +
+  geom_sf(aes(fill = value)) +
+  scale_fill_continuous(name = "Precip (mm)")
 ```
 
