@@ -209,7 +209,7 @@ liz_tidy$location[liz_tidy$reserve == "Stunt Ranch"] <- "inland"
 liz_tidy$location[liz_tidy$reserve == "Santa Cruz Island"] <- "inland"
 
 
-liz_tidy$month <- liz_tidy$date
+liz_tidy$month <- liz_tidy$round
 
 liz_tidy$month[liz_tidy$round == "2"] <- "March"
 liz_tidy$month[liz_tidy$round == "3"] <- "April"
@@ -226,6 +226,7 @@ liz_tidy$region <- factor(liz_tidy$region,
 regioncolor = c('brown1','tan1','lightgoldenrod1')
 locationcolor = c('darkseagreen1', 'brown')
 
+library(lubridate)
 liz_tidy$julian <- liz_tidy$date
 liz_tidy$julian <- mdy(liz_tidy$date)
 
@@ -767,5 +768,572 @@ ca_join1 <- filter(cnty_join1, STATEFP == "06")
 ggplot(data = ca_join1) +
   geom_sf(aes(fill = value)) +
   scale_fill_continuous(name = "Precip (mm)")
+```
+
+
+
+### UCNRS weather stations
+```{r message = FALSE}
+fort <- read_csv("fort-ord-humidity.csv")
+fort$reserve <- "Fort Ord"
+names(fort) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+
+hast <- read_csv("hastings-humidity.csv")
+names(hast) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+hast$reserve <- "Hastings"
+
+big <- read_csv("big-creek-humidity.csv")
+names(big) <- c("time", "hum_avg", "hum_max", "hum_min")
+big$reserve <- "Big Creek"
+
+
+ranch <- read_csv("rancho-humidity.csv")
+names(ranch) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+ranch$reserve <- "Rancho Marino"
+
+sedg <- read_csv("sedgwick-humidity.csv")
+names(sedg) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+sedg$reserve <- "Sedgwick"
+
+stunt <- read_csv("stunt-humidity.csv")
+names(stunt) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+stunt$reserve <- "Stunt Ranch"
+
+
+humidity <- rbind(fort, hast, big, ranch, sedg, stunt)
+
+
+humidity$region <- humidity$reserve
+
+humidity$region[humidity$reserve == "Fort Ord"] <- "central"
+humidity$region[humidity$reserve == "Hastings"] <- "central"
+humidity$region[humidity$reserve == "Big Creek"] <- "central"
+humidity$region[humidity$reserve == "Rancho Marino"] <- "central"
+
+humidity$region[humidity$reserve == "Sedgwick"] <- "southern"
+humidity$region[humidity$reserve == "Stunt Ranch"] <- "southern"
+
+
+humidity$reserve <- factor(humidity$reserve,
+                      levels = c(
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", 
+                                 "Stunt Ranch"))
+
+
+
+humidity$location <- humidity$region
+
+humidity$location[humidity$reserve == "Fort Ord"] <- "coastal"
+humidity$location[humidity$reserve == "Hastings"] <- "inland"
+humidity$location[humidity$reserve == "Big Creek"] <- "coastal"
+humidity$location[humidity$reserve == "Rancho Marino"] <- "coastal"
+
+humidity$location[humidity$reserve == "Sedgwick"] <- "inland"
+humidity$location[humidity$reserve == "Stunt Ranch"] <- "inland"
+
+humidity$date <- as.Date(humidity$time)
+humidity$hour <- format(humidity$time, "%H:%M:%S")
+
+
+liz_tidy$date <- as.Date(liz_tidy$date)
+
+names(liz_tidy) #592
+names(humidity)
+
+```
+
+```{r}
+# now combine
+
+liz_tidy <- subset(liz_tidy, select = -c(11))
+
+
+humidity_avg <- aggregate(hum_avg ~ reserve + date, data = humidity, FUN = mean)
+
+humidity_min <- aggregate(hum_min ~ reserve + date, data = humidity, FUN = mean)
+
+humidity_max <- aggregate(hum_max ~ reserve + date, data = humidity, FUN = mean)
+
+full.1 <- merge(liz_tidy,humidity_avg, by = c("date","reserve"))
+
+full.2 <- merge(full.1, humidity_min, by = c("date","reserve"))
+
+full.3 <- merge(full.2, humidity_max, by = c("date","reserve"))
+```
+
+```{r}
+ggplot(full.3, aes(x = hum_avg, y = log(count + 1))) +
+  geom_point() +
+  geom_smooth()+
+  geom_smooth(aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..)), color = "red")+
+  facet_wrap(~lifestage) +
+  theme_bw() +
+  coord_cartesian(ylim = c(0,3.5)) +
+  ggtitle("Lizard burden ~ Humidity Average %")+
+  labs(y = "Log(tick count) per lizard", x = "Humidity Average %") +
+  theme(strip.background = element_rect(fill = 'gray95')) + 
+  annotate(geom = "text",x = 1, y = 4,  label = "ρ = 0.23, p < .001", size = 5)
+  
+
+ggplot(full.3, aes(x = hum_min, y = log(count + 1))) +
+  geom_point() +
+  geom_smooth(aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..)), color = "red")+
+  facet_wrap(~lifestage)+
+  theme_bw() +
+  coord_cartesian(ylim = c(0,3.5)) +
+  ggtitle("Lizard burden ~ Humidity Min %")+
+  labs(y = "Log(tick count) per lizard", x = "Humidity Min %")+
+  theme(strip.background = element_rect(fill = 'gray95'))
+  
+ggplot(full.3, aes(x = hum_max, y = log(count + 1))) +
+  geom_point() +
+  geom_smooth(aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..)), color = "red")+
+  facet_wrap(~lifestage)+
+  theme_bw() +
+  coord_cartesian(ylim = c(0,3.5)) +
+  ggtitle("Lizard burden ~ Humidity Max %") +
+  labs(y = "Log(tick count) per lizard", x = "Humidity Max %")+
+  theme(strip.background = element_rect(fill = 'gray95'))
+  
+
+## 1 graph 2 lifestages
+ggplot(full.3, aes(x = hum_avg, y = log(count + 1), group = lifestage, color = lifestage)) +
+  geom_point() +
+  geom_smooth(aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..), color = lifestage), size = 1.8, alpha = .25)+
+  theme_bw() +
+  coord_cartesian(ylim = c(0,3.5), xlim = c(20,100)) +
+  ggtitle("Lizard tick burden ~ Humidity Average %")+
+  labs(y = "Log(tick count) per lizard", x = "Humidity Average %") +
+  scale_color_manual(values = c("#56B4E9","#BF1B0B"))+
+  annotate(geom = "text",x = 30.5, y = 3.2,  label = "ρ = 0.23; p < 0.001", color = "red")+
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+ggsave("Lizburden_humidity_v3.pdf", dpi = 320)
+```
+
+plot humidity 
+```{r}
+ggplot(humidity, aes(x = time, y = hum_avg, color = location)) +
+geom_line(alpha = .2) +
+  theme_bw() +
+  facet_wrap(~location, ncol = 2)+
+  guides(color = FALSE) +
+    coord_cartesian(ylim = c(0,100)) +
+  ggtitle("Avg Humidity %") 
+  
+ggplot(humidity, aes(x = time, y = hum_min, color = location)) +
+geom_line(alpha = .2) +
+  theme_bw() +
+  facet_wrap(~location, ncol = 2)+
+  guides(color = FALSE) +
+    coord_cartesian(ylim = c(0,100))+
+  ggtitle("Min Humidity %")
+
+ggplot(humidity, aes(x = time, y = hum_max, color = location)) +
+geom_line(alpha = .2) +
+  theme_bw() +
+  facet_wrap(~location, ncol = 2)+
+  guides(color = FALSE) +
+    coord_cartesian(ylim = c(0,100))  +
+  ggtitle("Max Humidity %")
+
+
+
+ggplot(humidity, aes(x = time, y = hum_avg, color = region)) +
+geom_line(alpha = .2) +
+  theme_bw() +
+  facet_wrap(~region, ncol = 2) +
+  guides(color = FALSE) +
+    coord_cartesian(ylim = c(0,100)) +
+  ggtitle("Avg Humidity %")
+
+
+
+ggplot(humidity, aes(x = time, y = hum_avg, group = location, color = location)) +
+geom_line(color = 'gray56',alpha = .1) +
+  scale_fill_manual(values = c("#3D5B59", "#B5651D")) +
+  scale_color_manual(values = c("#3D5B59", "#B5651D")) + #749EB2
+  theme_bw() +
+  stat_smooth(aes(color = location), size = 1.5)+
+  #facet_wrap(~location, ncol = 2)+
+  #guides(color = FALSE) +
+  coord_cartesian(ylim = c(0,100)) +
+  #ggtitle("Avg temp (C)") +
+  labs(y = "Average Humidity %", x = "Date") +
+  theme(strip.background = element_rect(fill = 'gray95'))+
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+ggsave("Reserve_hum_v3.pdf", dpi = 320)
+
+```
+
+
+
+```{r}
+cor.test(full.3$count, full.3$hum_avg) # 0.2252259; p-value = 1.118e-06
+cor.test(full.7$count, full.7$temp_avg) # -0.1717307 ; p = 0.000222
+
+```
+
+
+## temp and precip data
+```{r message = FALSE}
+fort_w <- read_csv("fort-ord-temp-precip.csv")
+fort_w$reserve <- "Fort Ord"
+names(fort_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+fort_fin <-  subset(fort_w, select = -c(2:7,9:11))
+
+
+hast_w <- read_csv("hastings-temp-precip.csv")
+hast_w$reserve <- "Hastings"
+names(hast_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+hast_fin <-  subset(hast_w, select = -c(2:7,9:11))
+
+
+
+big_w <- read_csv("big-creek-temp-precip.csv")
+big_w$reserve <- "Big Creek"
+names(big_w) <- c("time", 
+                 "temp_avg",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+rancho_w <- read_csv("rancho-marino-temp-preci.csv")
+rancho_w$reserve <- "Rancho Marino"
+names(rancho_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+rancho_fin <-  subset(rancho_w, select = -c(2:7,9:11))
+
+
+sedg_w <- read_csv("sedgwick-temp-precip.csv")
+sedg_w$reserve <- "Sedgwick"
+names(sedg_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+sedg_fin <-  subset(sedg_w, select = -c(2:7,9:11))
+
+
+
+stunt_w <- read_csv("stunt-ranch-temp-precip.csv")
+stunt_w$reserve <- "Stunt Ranch"
+names(stunt_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+stunt_fin <-  subset(stunt_w, select = -c(2:7,9:11))
+
+
+
+
+# see if they have the same columns
+names(fort_w) # 15
+names(hast_w) # 15
+names(big_w) # only 6
+names(rancho_w) # 15
+names(sedg_w) # 15
+names(stunt_w) # 15
+
+
+## now combine them 
+
+
+temp_rain <- rbind(fort_fin, hast_fin, big_w, rancho_fin, sedg_fin, stunt_fin) #152279, 6
+
+
+## let's add all the other stuf 
+
+temp_rain$region <- temp_rain$reserve
+
+temp_rain$region[temp_rain$reserve == "Fort Ord"] <- "central"
+temp_rain$region[temp_rain$reserve == "Hastings"] <- "central"
+temp_rain$region[temp_rain$reserve == "Big Creek"] <- "central"
+temp_rain$region[temp_rain$reserve == "Rancho Marino"] <- "central"
+
+temp_rain$region[temp_rain$reserve == "Sedgwick"] <- "southern"
+temp_rain$region[temp_rain$reserve == "Stunt Ranch"] <- "southern"
+
+
+temp_rain$reserve <- factor(temp_rain$reserve,
+                      levels = c(
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", 
+                                 "Stunt Ranch"))
+
+
+
+temp_rain$location <- temp_rain$region
+
+temp_rain$location[temp_rain$reserve == "Fort Ord"] <- "coastal"
+temp_rain$location[temp_rain$reserve == "Hastings"] <- "inland"
+temp_rain$location[temp_rain$reserve == "Big Creek"] <- "coastal"
+temp_rain$location[temp_rain$reserve == "Rancho Marino"] <- "coastal"
+
+temp_rain$location[temp_rain$reserve == "Sedgwick"] <- "inland"
+temp_rain$location[temp_rain$reserve == "Stunt Ranch"] <- "inland"
+
+temp_rain$date <- as.Date(temp_rain$time)
+temp_rain$hour <- format(temp_rain$time, "%H:%M:%S")
+
+
+```
+
+now combine data
+```{r}
+temp_avg <- aggregate(temp_avg ~ reserve + date, FUN = mean, data = temp_rain )
+
+temp_min <- aggregate(temp_min ~ reserve + date, FUN = mean , data = temp_rain)
+
+temp_max <- aggregate(temp_max ~ reserve + date, FUN = mean , data = temp_rain)
+
+rain <- aggregate(rain_mm ~ reserve + date,  FUN = mean , data = temp_rain)
+
+
+full.4 <- merge(full.3,temp_avg, by = c("date","reserve")) #458, 14
+
+full.5 <- merge(full.4, temp_min, by = c("date","reserve")) #458, 15
+
+full.6 <- merge(full.5, temp_max, by = c("date","reserve")) #458, 16
+
+full.7 <- merge(full.6, rain, by = c("date","reserve")) #458, 17 # i need to figure this out since i didn't sample when it was raining
+
+## full.7 has everything we want
+
+
+
+```
+
+plot
+
+temp average shows swing
+*like this*
+```{r}
+ggplot(temp_rain, aes(x = time, y = temp_avg, group = location)) +
+geom_line(color = "grey82") +
+  theme_bw() +
+  stat_smooth()+
+  facet_wrap(~location, ncol = 2)+
+  guides(color = FALSE) +
+  coord_cartesian(ylim = c(-13,38)) +
+  #ggtitle("Avg temp (C)") +
+  labs(y = "Average Temperature (°C)", x = "Date") +
+  theme(strip.background = element_rect(fill = 'gray95'))+
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))
+
+
+ggplot(temp_rain, aes(x = time, y = temp_avg, group = location,color = location)) +
+geom_line(alpha = .1) +
+  scale_fill_manual(values = c("#3D5B59", "#009E73")) +
+  scale_color_manual(values = c("#3D5B59", "#009E73")) + #749EB2
+  theme_bw() +
+  stat_smooth()+
+  #facet_wrap(~location, ncol = 2)+
+  #guides(color = FALSE) +
+  coord_cartesian(ylim = c(-13,38)) +
+  #ggtitle("Avg temp (C)") +
+  labs(y = "Average Temperature (°C)", x = "Date") +
+  theme(strip.background = element_rect(fill = 'gray95'))+
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))
+
+ggplot(temp_rain, aes(x = time, y = temp_avg, group = location)) +
+geom_line(color = 'gray56',alpha = .1) +
+  #scale_fill_manual(values = c("#3D5B59", "#009E73")) +
+  scale_color_manual(values = c("#3D5B59", "#B5651D")) + #749EB2 "#009E73"
+  theme_bw() +
+  stat_smooth(aes(color = location), size = 1.5)+
+  #facet_wrap(~location, ncol = 2)+
+  #guides(color = FALSE) +
+  coord_cartesian(ylim = c(-13,38)) +
+  #ggtitle("Avg temp (C)") +
+  labs(y = "Average Temperature (°C)", x = "Date") +
+  theme(strip.background = element_rect(fill = 'gray95'))+
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+ggsave("Reserve_temp_v3.pdf", dpi = 320)
+
+```
+
+```{r}
+ggplot(temp_rain, aes(x = time, y = temp_min, color = location)) +
+geom_line(alpha = .2) +
+  theme_bw() +
+  facet_wrap(~location, ncol = 2)+
+  guides(color = FALSE) +
+  coord_cartesian(ylim = c(-10,34))+
+  ggtitle("Min temperature")
+
+ggplot(temp_rain, aes(x = time, y = temp_max, color = location)) +
+geom_line(alpha = .2) +
+  theme_bw() +
+  facet_wrap(~location, ncol = 2)+
+  guides(color = FALSE) +
+  #coord_cartesian(ylim = c(0,100))  +
+  ggtitle("Max temperature ")
+
+
+
+ggplot(temp_rain, aes(x = time, y = temp_avg, color = region)) +
+geom_line() +
+  theme_bw() +
+  facet_wrap(~region, ncol = 2)+
+  guides(color = FALSE) +
+  #coord_cartesian(ylim = c(0,100)) +
+  ggtitle("Avg temperature")
+
+
+
+```
+
+
+```{r}
+## 1 graph 2 lifestages
+ggplot(full.7, aes(x = temp_avg, y = log(count + 1), group = lifestage, color = lifestage)) +
+  geom_point() +
+  geom_smooth(aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..), color = lifestage), size = 1.8, alpha = .25)+
+  theme_bw() +
+  #coord_cartesian(ylim = c(0,3.5), xlim = c(20,100)) +
+  ggtitle("Lizard tick burden ~ Average temperature (°C)")+
+  labs(y = "Log(tick count) per lizard", x = "Average Temperature (°C)", color = "life stage") +
+  scale_color_manual(values = c("#56B4E9","#BF1B0B"))+
+  theme(legend.position = 'bottom', legend.box = 'horizontal') +
+  theme(axis.title.y =  element_text(face = 'bold',size = 12, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 12, vjust = .5)) +
+  annotate(geom = "text",x = 20, y = 3.2,  label = "ρ =  -0.1717307; p < .001", color = "red")
+ggsave("Lizburden_temp_v1.pdf", dpi = 320)
+
+tick_count <-aggregate(count ~ lifestage, data = liz_tidy, FUN = sum)
+ggplot(tick_count, aes(x = lifestage, y = count, fill = lifestage, color = lifestage)) +
+  geom_histogram(stat = "identity", width = .9) +
+  labs(y = "Total ticks on lizards", x = "Tick life stage") +
+  theme_bw() +
+  scale_fill_manual(values = c("#56B4E9","#BF1B0B"))+
+  scale_color_manual(values = c("#56B4E9","#BF1B0B"))+ #"#E69F00"
+  guides(fill = FALSE, color = FALSE) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 12, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 12, vjust = .5)) +
+  theme(aspect.ratio = 3/1) +
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+ggsave("Lizburden_total_v3.pdf", dpi = 320)
+
+sum(liz_tidy$count[liz_tidy$lifestage == "larval"]) #713
+sum(liz_tidy$count[liz_tidy$lifestage == "nymphal"]) #791
+
+```
+```{r}
+library(nlme)
+library(lme4)
+library(kableExtra)
+library(MASS)
+library(ggfortify)
+library(jtools)
+library(effects)
+library(pscl)
+library(lmtest)
+library(ggstance)
+library(huxtable)
+library(qwraps2)
+library(gtsummary)
+library(Rcapture)
+library(xlsx)
+library(glmmTMB) 
+
+hist(full.7$count)
+
+mod.counts_temp <- glm(count ~ temp_avg,
+                  family = poisson, data = full.7)
+summary(mod.counts_temp) # AIC: 3309.4; p < 0.001
+plot(predictorEffects(mod.counts_temp)) # decrease
+
+mod.counts_hum <- glm(count ~ hum_avg,
+                  family = poisson, data = full.7)
+summary(mod.counts_hum) # AIC: 3209.3; p < 0.001
+plot(predictorEffects(mod.counts_hum)) #pos
+
+
+# 
+# full.7$lifestage <- as.factor(full.7$lifestage)
+# climate_gnbmod1 <- glm(count ~ temp_avg,
+#                        family = "poisson",
+#                  data = na.omit(full.7) 
+#                  )
+# 
+# 
+# climate_gnbmod2 <- glmer.nb(count ~ humidity_avg +  (1|lifestage), 
+#                  data = na.omit(full.7),
+#                  family = "poisson")
+# 
+# 
+result <- AIC(mod.counts_temp, mod.counts_hum)
+models <- list(mod.counts_temp, mod.counts_hum)
+
+
+
+result$BIC <- sapply(models, BIC)
+model_summary <- lapply(models, summary)
+for(i in 1:(length(models)-1)){ #this creates a variable i that starts with the value i=1
+  result$rsq[i] <- model_summary[[i]]$r.squared #we assign the rsq value from model i to the i'th row of the column 'rsq' in the table 'results'
+  result$adj_rsq[i] <- model_summary[[i]]$adj.r.squared #same for adjusted rsq
+} #now we go back to the beginning of the for-loop, add 1 to the value of i, and do everything again
+
+result$variables <- c("temp_avg", "hum_avg")
+
+climate_models <- kable(result, digits = 2, align = "c") %>%
+  kable_styling()
+
+
 ```
 
