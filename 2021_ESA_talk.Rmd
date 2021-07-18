@@ -1,0 +1,709 @@
+---
+title: "ESA_talk"
+author: "sbsambado"
+date: "7/17/2021"
+output: html_document
+---
+
+Here is the code/analyses I used for my virtual talk at ESA on 8/3/2021.
+
+**Title**: Evaluating seasonal tick-borne disease risk across a latitudinal and coastal gradient
+
+**Abstract**:
+Tick-borne disease risk is variable throughout the United States yet can be predicted based on ecological factors such as temperature, relative humidity and host community structure. These abiotic and biotic factors shape tick phenology (i.e. the relative timing of the emergence of the larval and nymphal tick life stages within a year) and can influence the efficiency of pathogen maintenance in a natural system. In particular, the sequential feeding of infected nymphs on uninfected hosts followed by the feeding of uninfected larvae on the newly infected host can facilitate persistence of the pathogen from one tick generation to the next. The duration and intensity of this interaction between vectors and hosts depends greatly on extrinsic factors such as regional seasonality and land use cover. Depending on the interaction, certain modes of transmission (horizontal, vertical, or co-feeding) may be more beneficial to pathogen maintenance and pathogen diversity within a natural community. 1) We collected empirical data from 11 sites that were sampled 5 times in one season to capture variation in tick phenology and pathogen maintenance. 2) We explored the variations of tick-host interactions across a latitudinal and coastal gradient to find potential mechanism for pathogen diversity and variation in tick-borne disease incidence.
+
+**Results/Conclusions**
+
+Using statistical and spatial models, we find that tick phenology varies across a North to South gradient that creates different mechanisms for pathogen maintenance. Although this pattern has been recognized before, we noticed a unique pattern that coastal sites with high relative humidity levels serve as microhabitats that promote different tick phenologies from their respective inland sites. During the summer months, two sites that are separated by 400 latitudinal miles, have more similar tick patterns than sites that are separated by 100 coastal miles due to the effect of the summer marine layer. The coastal effect on tick populations creates temporally different disease risk within a given region that needs to be highlighted by public health officials, especially in dense coastal communities in arid southern regions. Furthermore, variations in tick phenologies along a latitudinal gradient may benefit certain transmission modes and will shape variations in pathogen diversity within a natural community. With these observed trends, we predict how pathogen maintenance and pathogen community assemblage will shift with a changing climate. This framework can be applied to other vector-borne disease systems that are part of complex host-vector interactions and are responsive to multiple environmental predictors.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(dplyr)
+
+library(devtools)
+devtools::install_github("an-bui/calecopal")
+library(calecopal)
+names(cal_palettes)
+
+
+```
+
+
+# Datasets
+
+#### Dataset 1: Lizard wide
+
+```{r message = FALSE}
+
+liz <- read_csv("Mathias2021_FieldData_Lizard - Sheet1.csv")
+dim(liz)
+
+names(liz) <- c('reserve', 'round', 'date', 'site', 'liz', 'burden','l_final', 'n_final', 'lab_l', 'lab_n', 'lab_dc_l', 'lab_dc_n', 'field_count', 'terms')
+
+liz$round <- as.factor(liz$round)
+
+
+liz$region <- liz$reserve
+
+liz$region[liz$reserve == "McLaughlin"] <- "northern"
+liz$region[liz$reserve == "Quail Ridge"] <- "northern"
+liz$region[liz$reserve == "Point Reyes"] <- "northern"
+
+liz$region[liz$reserve == "Fort Ord"] <- "central"
+liz$region[liz$reserve == "Hastings"] <- "central"
+liz$region[liz$reserve == "Big Creek"] <- "central"
+liz$region[liz$reserve == "Rancho Marino"] <- "central"
+
+liz$region[liz$reserve == "Sedgwick"] <- "southern"
+liz$region[liz$reserve == "Coal Oil Point"] <- "southern"
+liz$region[liz$reserve == "Stunt Ranch"] <- "southern"
+liz$region[liz$reserve == "Santa Cruz Island"] <- "southern"
+
+
+liz$reserve <- factor(liz$reserve,
+                      levels = c("McLaughlin", "Quail Ridge", "Point Reyes",
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", "Coal Oil Point",
+                                 "Stunt Ranch", "Santa Cruz Island"))
+
+liz$location <- liz$region
+
+liz$location[liz$reserve == "McLaughlin"] <- "inland"
+liz$location[liz$reserve == "Quail Ridge"] <- "inland"
+liz$location[liz$reserve == "Point Reyes"] <- "coastal"
+
+liz$location[liz$reserve == "Fort Ord"] <- "coastal"
+liz$location[liz$reserve == "Hastings"] <- "inland"
+liz$location[liz$reserve == "Big Creek"] <- "coastal"
+liz$location[liz$reserve == "Rancho Marino"] <- "coastal"
+
+liz$location[liz$reserve == "Sedgwick"] <- "inland"
+liz$location[liz$reserve == "Coal Oil Point"] <- "coastal"
+liz$location[liz$reserve == "Stunt Ranch"] <- "inland"
+liz$location[liz$reserve == "Santa Cruz Island"] <- "inland"
+
+
+liz$month <- liz$date
+
+liz$month[liz$round == "2"] <- "March"
+liz$month[liz$round == "3"] <- "April"
+liz$month[liz$round == "4"] <- "May"
+liz$month[liz$round == "5"] <- "June"
+
+liz$month <- factor(liz$month, 
+                    levels = c("March", "April", "May", "June"))
+
+liz$region <- factor(liz$region, 
+                     levels = c("northern", "central", "southern"))
+
+
+regioncolor = c('brown1','tan1','lightgoldenrod1')
+locationcolor = c('darkseagreen1', 'brown')
+
+# remove NA from month
+liz <- subset(liz, !is.na(month))
+```
+
+#### Dataset 2: Lizard tidy
+
+```{r message = FALSE}
+liz_tidy <- read_csv("Mathias2021_FieldData_Lizard - lizard_tidy.csv")
+dim(liz_tidy)
+
+names(liz_tidy) <- c('reserve', 'round', 'date', 'liz_num', 'count','lifestage')
+
+liz_tidy$round <- as.factor(liz_tidy$round)
+
+
+liz_tidy$region <- liz_tidy$reserve
+
+liz_tidy$region[liz_tidy$reserve == "McLaughlin"] <- "northern"
+liz_tidy$region[liz_tidy$reserve == "Quail Ridge"] <- "northern"
+liz_tidy$region[liz_tidy$reserve == "Point Reyes"] <- "northern"
+
+liz_tidy$region[liz_tidy$reserve == "Fort Ord"] <- "central"
+liz_tidy$region[liz_tidy$reserve == "Hastings"] <- "central"
+liz_tidy$region[liz_tidy$reserve == "Big Creek"] <- "central"
+liz_tidy$region[liz_tidy$reserve == "Rancho Marino"] <- "central"
+
+liz_tidy$region[liz_tidy$reserve == "Sedgwick"] <- "southern"
+liz_tidy$region[liz_tidy$reserve == "Coal Oil Point"] <- "southern"
+liz_tidy$region[liz_tidy$reserve == "Stunt Ranch"] <- "southern"
+liz_tidy$region[liz_tidy$reserve == "Santa Cruz Island"] <- "southern"
+
+
+liz_tidy$reserve <- factor(liz_tidy$reserve,
+                      levels = c("McLaughlin", "Quail Ridge", "Point Reyes",
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", "Coal Oil Point",
+                                 "Stunt Ranch", "Santa Cruz Island"))
+
+
+
+liz_tidy$location <- liz_tidy$region
+
+liz_tidy$location[liz_tidy$reserve == "McLaughlin"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Quail Ridge"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Point Reyes"] <- "coastal"
+
+liz_tidy$location[liz_tidy$reserve == "Fort Ord"] <- "coastal"
+liz_tidy$location[liz_tidy$reserve == "Hastings"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Big Creek"] <- "coastal"
+liz_tidy$location[liz_tidy$reserve == "Rancho Marino"] <- "coastal"
+
+liz_tidy$location[liz_tidy$reserve == "Sedgwick"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Coal Oil Point"] <- "coastal"
+liz_tidy$location[liz_tidy$reserve == "Stunt Ranch"] <- "inland"
+liz_tidy$location[liz_tidy$reserve == "Santa Cruz Island"] <- "inland"
+
+
+liz_tidy$month <- liz_tidy$round
+
+liz_tidy$month[liz_tidy$round == "2"] <- "March"
+liz_tidy$month[liz_tidy$round == "3"] <- "April"
+liz_tidy$month[liz_tidy$round == "4"] <- "May"
+liz_tidy$month[liz_tidy$round == "5"] <- "June"
+
+liz_tidy$month <- factor(liz_tidy$month, 
+                    levels = c("March", "April", "May", "June"))
+
+liz_tidy$region <- factor(liz_tidy$region, 
+                     levels = c("northern", "central", "southern"))
+
+
+regioncolor = c('brown1','tan1','lightgoldenrod1')
+locationcolor = c('darkseagreen1', 'brown')
+
+liz_tidy$julian <- liz_tidy$date
+liz_tidy$julian <- ymd(liz_tidy$date)
+
+#liz_tidy$julian <- as.Date("%m/%d/%y", format = "%m/%d/%Y")
+
+liz_tidy$julian <- format(liz_tidy$julian, "%j")
+
+liz_tidy$julian <- as.numeric(liz_tidy$julian)
+
+liz_tidy$week <- round(liz_tidy$julian/7)
+
+liz_tidy
+```
+
+#### Dataset 3: Climate from UCNRS weather stations
+
+>[Dendra depository for UCNRS](https://dendra.science/orgs/ucnrs/status)
+
+
+```{r message = FALSE}
+#################### humidity data ####################
+
+fort <- read_csv("fort-ord-humidity.csv")
+fort$reserve <- "Fort Ord"
+names(fort) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+
+hast <- read_csv("hastings-humidity.csv")
+hast$reserve <- "Hastings"
+names(hast) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+
+big <- read_csv("big-creek-humidity.csv")
+big$reserve <- "Big Creek"
+names(big) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+
+
+ranch <- read_csv("rancho-humidity.csv")
+ranch$reserve <- "Rancho Marino"
+names(ranch) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+
+sedg <- read_csv("sedgwick-humidity.csv")
+sedg$reserve <- "Sedgwick"
+names(sedg) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+
+stunt <- read_csv("stunt-humidity.csv")
+stunt$reserve <- "Stunt Ranch"
+names(stunt) <- c("time", "hum_avg", "hum_max", "hum_min","reserve")
+
+
+humidity <- rbind(fort, hast, big, ranch, sedg, stunt)
+
+
+humidity$region <- humidity$reserve
+
+humidity$region[humidity$reserve == "Fort Ord"] <- "central"
+humidity$region[humidity$reserve == "Hastings"] <- "central"
+humidity$region[humidity$reserve == "Big Creek"] <- "central"
+humidity$region[humidity$reserve == "Rancho Marino"] <- "central"
+
+humidity$region[humidity$reserve == "Sedgwick"] <- "southern"
+humidity$region[humidity$reserve == "Stunt Ranch"] <- "southern"
+
+
+humidity$reserve <- factor(humidity$reserve,
+                      levels = c(
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", 
+                                 "Stunt Ranch"))
+
+
+
+humidity$location <- humidity$region
+
+humidity$location[humidity$reserve == "Fort Ord"] <- "coastal"
+humidity$location[humidity$reserve == "Hastings"] <- "inland"
+humidity$location[humidity$reserve == "Big Creek"] <- "coastal"
+humidity$location[humidity$reserve == "Rancho Marino"] <- "coastal"
+
+humidity$location[humidity$reserve == "Sedgwick"] <- "inland"
+humidity$location[humidity$reserve == "Stunt Ranch"] <- "inland"
+
+humidity$date <- as.Date(humidity$time)
+humidity$hour <- format(humidity$time, "%H:%M:%S")
+
+
+liz_tidy$date <- as.Date(liz_tidy$date)
+
+dim(liz_tidy) #592, 11
+dim(humidity) #152,279, 9
+
+
+
+############### ready to combine
+
+liz_tidy <- subset(liz_tidy, select = -c(11))
+
+
+humidity_avg <- aggregate(hum_avg ~ reserve + date, data = humidity, FUN = mean)
+
+humidity_min <- aggregate(hum_min ~ reserve + date, data = humidity, FUN = mean)
+
+humidity_max <- aggregate(hum_max ~ reserve + date, data = humidity, FUN = mean)
+
+full.1 <- merge(liz_tidy,humidity_avg, by = c("date","reserve"))
+
+full.2 <- merge(full.1, humidity_min, by = c("date","reserve"))
+
+full.3 <- merge(full.2, humidity_max, by = c("date","reserve"))
+
+
+
+
+
+#################### temperature and precipitation data ####################
+
+
+
+
+fort_w <- read_csv("fort-ord-temp-precip.csv")
+fort_w$reserve <- "Fort Ord"
+names(fort_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+fort_fin <-  subset(fort_w, select = -c(2:7,9:11))
+
+
+hast_w <- read_csv("hastings-temp-precip.csv")
+hast_w$reserve <- "Hastings"
+names(hast_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+hast_fin <-  subset(hast_w, select = -c(2:7,9:11))
+
+
+
+big_w <- read_csv("big-creek-temp-precip.csv")
+big_w$reserve <- "Big Creek"
+names(big_w) <- c("time", 
+                 "temp_avg",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+rancho_w <- read_csv("rancho-marino-temp-preci.csv")
+rancho_w$reserve <- "Rancho Marino"
+names(rancho_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+rancho_fin <-  subset(rancho_w, select = -c(2:7,9:11))
+
+
+sedg_w <- read_csv("sedgwick-temp-precip.csv")
+sedg_w$reserve <- "Sedgwick"
+names(sedg_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+sedg_fin <-  subset(sedg_w, select = -c(2:7,9:11))
+
+
+
+stunt_w <- read_csv("stunt-ranch-temp-precip.csv")
+stunt_w$reserve <- "Stunt Ranch"
+names(stunt_w) <- c("time", 
+                 "temp_10m_avg", "temp_10m_max","temp_10m_min",
+                 "temp_2m_avg", "temp_2m_max","temp_2m_min",
+                 "temp_avg",
+                 "temp_delta102m_avg","temp_delta102m_max","temp_delta102m_min",
+                 "temp_max", "temp_min",
+                 "rain_mm",
+                 "reserve")
+
+# select only overlapping columns for this analysis 
+
+stunt_fin <-  subset(stunt_w, select = -c(2:7,9:11))
+
+
+
+
+# see if they have the same columns
+names(fort_w) # 15
+names(hast_w) # 15
+names(big_w) # only 6
+names(rancho_w) # 15
+names(sedg_w) # 15
+names(stunt_w) # 15
+
+
+############### ready to combine
+
+
+temp_rain <- rbind(fort_fin, hast_fin, big_w, rancho_fin, sedg_fin, stunt_fin) #152279, 6
+
+
+## let's add all the other stuf 
+
+temp_rain$region <- temp_rain$reserve
+
+temp_rain$region[temp_rain$reserve == "Fort Ord"] <- "central"
+temp_rain$region[temp_rain$reserve == "Hastings"] <- "central"
+temp_rain$region[temp_rain$reserve == "Big Creek"] <- "central"
+temp_rain$region[temp_rain$reserve == "Rancho Marino"] <- "central"
+
+temp_rain$region[temp_rain$reserve == "Sedgwick"] <- "southern"
+temp_rain$region[temp_rain$reserve == "Stunt Ranch"] <- "southern"
+
+
+temp_rain$reserve <- factor(temp_rain$reserve,
+                      levels = c(
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", 
+                                 "Stunt Ranch"))
+
+
+
+temp_rain$location <- temp_rain$region
+
+temp_rain$location[temp_rain$reserve == "Fort Ord"] <- "coastal"
+temp_rain$location[temp_rain$reserve == "Hastings"] <- "inland"
+temp_rain$location[temp_rain$reserve == "Big Creek"] <- "coastal"
+temp_rain$location[temp_rain$reserve == "Rancho Marino"] <- "coastal"
+
+temp_rain$location[temp_rain$reserve == "Sedgwick"] <- "inland"
+temp_rain$location[temp_rain$reserve == "Stunt Ranch"] <- "inland"
+
+temp_rain$date <- as.Date(temp_rain$time)
+temp_rain$hour <- format(temp_rain$time, "%H:%M:%S")
+
+
+dim(temp_rain) # 152279, 10
+
+
+
+
+
+
+
+############## big data frame now
+
+
+
+temp_avg <- aggregate(temp_avg ~ reserve + date, FUN = mean, data = temp_rain )
+
+temp_min <- aggregate(temp_min ~ reserve + date, FUN = mean , data = temp_rain)
+
+temp_max <- aggregate(temp_max ~ reserve + date, FUN = mean , data = temp_rain)
+
+rain <- aggregate(rain_mm ~ reserve + date,  FUN = mean , data = temp_rain)
+
+
+full.4 <- merge(full.3,temp_avg, by = c("date","reserve")) #458, 14
+
+full.5 <- merge(full.4, temp_min, by = c("date","reserve")) #458, 15
+
+full.6 <- merge(full.5, temp_max, by = c("date","reserve")) #458, 16
+
+full.7 <- merge(full.6, rain, by = c("date","reserve")) #458, 17 # i need to figure this out since i didn't sample when it was raining
+
+## full.7 has everything we want
+
+
+```
+
+*this is the final dataset I'll be working with for tick counts & climate*
+```{r}
+dim(full.7) # 458, 17 # all 11 reserves, really 10 that had lizards
+
+# or make a dataset with 6 reserves with best and consistent lizard data
+# fort ord, hastings, big creek, rancho marino, sedgwick, stunt ranch
+
+full.7_goodliz <- subset(full.7, reserve == "Fort Ord" |
+                           reserve == "Hastings"|
+                           reserve == "Big Creek"|
+                           reserve == "Rancho Marino"|
+                           reserve == "Sedgwick"|
+                           reserve == "Stunt Ranch")
+
+unique(full.7_goodliz$reserve)
+```
+
+
+## Graph 1: Lizard burdens across all sites
+```{r}
+ggplot(liz, aes(x = month, y = log(burden + 1))) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Month",y =  "Log of tick counts per lizard",color = "Reserve (N to S)") +
+  #theme(legend.text = element_text(size = 5),
+        #legend.title = element_text(size = 6),
+        #axis.title.x = element_text(size = 7)) +
+  theme_bw() +
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5)) 
+ggsave("ESA_LizBurden_AllReserves__v1.pdf", dpi = 320)
+
+
+```
+
+## Graph 2: Lizard burdens across N:S and W:E
+
+```{r}
+liz_nomarch <- filter(liz, month != "March")
+ggplot(liz_nomarch, aes(x = region, y = log(burden + 1))) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Region",y =  "Log of tick counts per lizard",color = "Reserve (N to S)") +
+  theme_bw() +
+  facet_wrap(~month)+
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  guides(color = FALSE)
+ggsave("ESA_LizBurden_Region_v1.pdf", dpi = 320)
+
+
+liz_nomarch <- filter(liz, month != "March")
+ggplot(liz_nomarch, aes(x = location, y = log(burden + 1))) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .7, width = .1) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Location",y =  "Log of tick counts per lizard",color = "Reserve (N to S)") +
+  theme_bw() +
+  facet_wrap(~month)+
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  guides(color = FALSE)
+ggsave("ESA_LizBurden_Location_v1.pdf", dpi = 320)
+
+```
+
+## Graph 3: Climate data of reserves
+
+*need to highlight I only choose 6 reserves with best lizard burden data*
+```{r}
+##### temperature
+
+ggplot(temp_rain, aes(x = time, y = temp_avg)) +
+geom_line(color = 'gray77',alpha = .07) +
+  scale_color_manual(values = c("#66ADE5", "#B5651D")) + #749EB2 "#009E73"
+  theme_bw() +
+  stat_smooth(aes(color = location), size = 1.5)+
+  coord_cartesian(ylim = c(-13,38)) +
+  labs(y = "Average temperature (°C)", x = "Date", group = "Location") +
+  theme(strip.background = element_rect(fill = 'gray95'))+
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+ggsave("ESA_Temperature_Location_v3.pdf", dpi = 320)
+
+
+
+##### humidity
+ggplot(humidity, aes(x = time, y = hum_avg)) +
+geom_line(color = 'gray77',alpha = .07) + # "#66ADE5"  blue, "#3D5B59" green
+  scale_color_manual(values = c("#66ADE5", "#B5651D")) + #749EB2 "#009E73"
+  theme_bw() +
+  stat_smooth(aes(color = location), size = 1.5)+
+  coord_cartesian(ylim = c(0,100)) +
+  labs(y = "Average humidity (%)", x = "Date", group = "Location") +
+  theme(strip.background = element_rect(fill = 'gray95'))+
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+ggsave("ESA_Humidity_Location_v3.pdf", dpi = 320)
+
+
+
+```
+
+## Graph 4: Total tick and lizard counts
+
+```{r}
+
+### sum of tick counts
+tick_count <-aggregate(count ~ lifestage, data = liz_tidy, FUN = sum)
+ggplot(tick_count, aes(x = lifestage, y = count, fill = lifestage, color = lifestage)) +
+  geom_histogram(stat = "identity", width = .9) +
+  labs(y = "Sum of ticks on lizards", x = "Tick life stage") +
+  theme_bw() +
+  scale_fill_manual(values = c("#56B4E9","#BF1B0B"))+
+  scale_color_manual(values = c("#56B4E9","#BF1B0B"))+ #"#E69F00"
+  guides(fill = FALSE, color = FALSE) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 12, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 12, vjust = .5)) +
+  theme(aspect.ratio = 3/1) +
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+ggsave("ESA_LizBurden_LifestageTotal_va.pdf", dpi = 320)
+
+
+
+### sum of lizards
+
+liz_counts_region <-liz %>%
+  group_by(reserve, month) %>%
+  summarise(freq = length(liz), .groups = 'drop')
+
+ggplot(liz_counts_region, aes(y = freq, x = reserve,fill = month)) +
+  geom_histogram(stat = "identity") +
+  theme(axis.text.x = element_text(size = 5)) +
+  scale_x_discrete(limits = rev(levels(liz_counts_region$reserve))) +
+  coord_flip() +
+  scale_fill_manual(values = c("#B5C861","#8AA789","#CB8573","#976153"))+
+  labs(y = "Number of sampled lizards \n per reserve", x = "Reserve", fill = "Month") +
+  theme_bw() +
+  theme(axis.title.y =  element_text(face = 'bold',size = 12, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 12, vjust = .5)) +
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+ggsave("ESA_LizCounts_Reserve_v1.pdf", dpi = 320)
+
+```
+
+## Graph 5: Tick count ~ climate variables 
+*need to highlight I only choose 6 reserves with best lizard burden data*
+
+```{r}
+#### humidity
+
+ggplot(full.7_goodliz, aes(x = hum_avg, y = log(count + 1), group = lifestage, color = lifestage)) +
+  geom_point() +
+  geom_smooth(aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..), color = lifestage), size = 1.8, alpha = .25)+
+  theme_bw() +
+  coord_cartesian(ylim = c(0,3.5), xlim = c(20,100)) +
+  labs(y = "Log of tick counts per lizard", x = "Average humidity (%)", color = "Tick life stage") +
+  scale_color_manual(values = c("#3D5B59","#BF1B0B"))+
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+  #annotate(geom = "text",x = 30.5, y = 3.2,  label = "ρ = 0.23; p < 0.001", color = "red")+
+ggsave("ESA_Lizburden_humidity_v2.pdf", dpi = 320)
+
+
+
+#### temperature
+
+ggplot(full.7_goodliz, aes(x = temp_avg, y = log(count + 1), group = lifestage, color = lifestage)) +
+  geom_point() +
+  geom_smooth(aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..), color = lifestage), size = 1.8, alpha = .25)+
+  theme_bw() +
+  #coord_cartesian(ylim = c(0,3.5), xlim = c(20,100)) +
+  labs(y = "Log of tick counts per lizard", x = "Average temperature (°C)", color = "Tick life stage") +
+  scale_color_manual(values = c("#3D5B59","#BF1B0B"))+ # "#3D5B59" < green, "#3D5B59" < blue
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))+
+  theme(legend.position = 'bottom', legend.box = 'horizontal')
+ggsave("ESA_Lizburden_temperature_v2.pdf", dpi = 320)
+
+```
+
+
+### Basic stats
+*need to highlight I only choose 6 reserves with best lizard burden data*
+
+```{r}
+
+########################## spearman correlation ##########################
+library(psych)
+
+full.7_sub <- subset(full.7_goodliz, select = c(2,3,5,6,7,8,11,14))
+
+pairs.panels(full.7_sub)
+
+
+cor.test(full.7_goodliz$count, full.7_goodliz$hum_avg, method = "spearman") # 0.2518174; p-value = 4.69e-08
+cor.test(full.7_goodliz$count, full.7_goodliz$temp_avg, method = "spearman") # -0.1751857 ; p = 0.0001645
+
+########################## GLM ##########################
+
+
+library(car)
+library(MASS)
+library(ggplot2)
+library(psych)
+
+
+summary(full.7_goodliz$count)
+
+fit_hum <- glm(count ~ hum_avg, data = full.7_goodliz, family = "poisson")
+summary(fit_hum) # AIC: 3209.3, p = 2.92e-08 ***
+
+fit_temp <- glm(count ~ temp_avg, data = full.7_goodliz, family = "poisson")
+summary(fit_temp) # AIC: 3309.4, p <2e-16
+```
+
+
+
