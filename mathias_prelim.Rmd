@@ -540,3 +540,20 @@ ggplot(liz_counts_region, aes(y = freq, x = region,fill = month)) +
 
 ```
 
+proportions
+```{r}
+liz
+```
+
+# proportions
+```{r}
+# tot_count <- aggregate(count ~ lifestage + reserve, data = liz_tidy, FUN = sum)
+# 
+# total_count <- merge(liz_tidy, tot_count, by = c("lifestage","reserve"))
+# 
+# 
+# total_count$proportions <- total_count$count.x/total_count$count.y
+# 
+# ggplot(total_count, aes(x = date, y = proportions)) +
+#   geom_point() +
+#   facet_wrap(~location)

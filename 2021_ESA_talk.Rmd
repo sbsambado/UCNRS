@@ -512,6 +512,9 @@ ggplot(liz, aes(x = month, y = log(burden + 1))) +
 ggsave("ESA_LizBurden_AllReserves__v1.pdf", dpi = 320)
 
 
+
+
+
 ```
 
 ## Graph 2: Lizard burdens across N:S and W:E
@@ -639,11 +642,11 @@ ggsave("ESA_LizCounts_Reserve_v1.pdf", dpi = 320)
 
 ggplot(full.7_goodliz, aes(x = hum_avg, y = log(count + 1), group = lifestage, color = lifestage)) +
   geom_point() +
-  geom_smooth(aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..), color = lifestage), size = 1.8, alpha = .25)+
+  geom_smooth(method = 'loess' ,aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..), color = lifestage), size = 1.8, alpha = .25)+
   theme_bw() +
   coord_cartesian(ylim = c(0,3.5), xlim = c(20,100)) +
-  labs(y = "Log of tick counts per lizard", x = "Average humidity (%)", color = "Tick life stage") +
-  scale_color_manual(values = c("#3D5B59","#BF1B0B"))+
+  labs(y = "Log of tick counts\n per lizard", x = "Average humidity (%)", color = "Tick life stage") +
+  scale_color_manual(values = c("#56B4E9","#BF1B0B"))+
   theme(strip.text.x = element_text(face = 'bold')) +
   theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
   theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))+
@@ -657,11 +660,11 @@ ggsave("ESA_Lizburden_humidity_v2.pdf", dpi = 320)
 
 ggplot(full.7_goodliz, aes(x = temp_avg, y = log(count + 1), group = lifestage, color = lifestage)) +
   geom_point() +
-  geom_smooth(aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..), color = lifestage), size = 1.8, alpha = .25)+
+  geom_smooth(method = 'loess' ,aes(ymin = ifelse(..ymin.. < 0, 0, ..ymin..), color = lifestage), size = 1.8, alpha = .25)+
   theme_bw() +
   #coord_cartesian(ylim = c(0,3.5), xlim = c(20,100)) +
-  labs(y = "Log of tick counts per lizard", x = "Average temperature (°C)", color = "Tick life stage") +
-  scale_color_manual(values = c("#3D5B59","#BF1B0B"))+ # "#3D5B59" < green, "#3D5B59" < blue
+  labs(y = "Log of tick counts\n per lizard", x = "Average temperature (°C)", color = "Tick life stage") +
+  scale_color_manual(values = c("#56B4E9","#BF1B0B"))+ # "#3D5B59" < green, "#3D5B59" < blue
   theme(strip.text.x = element_text(face = 'bold')) +
   theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5))+
   theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5))+
@@ -706,4 +709,34 @@ summary(fit_temp) # AIC: 3309.4, p <2e-16
 ```
 
 
+
+```{r}
+ggplot(full.7_goodliz, aes(x = region, y = log(count + 1)), group = region) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .7) +
+  facet_wrap(~round) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Month",y =  "Log of tick counts per lizard",color = "Reserve (N to S)") +
+  #theme(legend.text = element_text(size = 5),
+        #legend.title = element_text(size = 6),
+        #axis.title.x = element_text(size = 7)) +
+  theme_bw() +
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5)) 
+
+ggplot(full.7_goodliz, aes(x = location, y = log(count + 1)), group = location) +
+  geom_boxplot() +
+  geom_jitter(aes(color = reserve), alpha = .7) +
+  facet_wrap(~round) +
+  scale_color_manual(values = cal_palette("sierra1", n = 11, type = "continuous"))+
+  labs(x = "Month",y =  "Log of tick counts per lizard",color = "Reserve (N to S)") +
+  #theme(legend.text = element_text(size = 5),
+        #legend.title = element_text(size = 6),
+        #axis.title.x = element_text(size = 7)) +
+  theme_bw() +
+  theme(strip.text.x = element_text(face = 'bold')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5)) 
+```
 
