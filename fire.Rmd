@@ -1,0 +1,72 @@
+---
+title: "fire"
+author: "sbsambado"
+date: "9/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+
+full <- read.csv("California Tick Data Base - Sheet1.csv")
+dim(full)
+
+unique(full$project)
+fire <- full %>%
+  filter(project == "fire_gage")
+dim(fire)
+
+fire %>%
+  group_by(species) %>%
+  tally()
+
+fire$count <- 1
+
+fire$month <- factor(fire$month,
+                     levels = c("April",
+                                "May ",
+                                "June"))
+
+# make columns for treatment (burn/unburned)
+fire$treatment <- fire$site
+
+
+fire$treatment <- ifelse(grepl("U",fire$site),"unburned", "burned")
+
+
+fire$vegetation <- fire$site
+
+fire$vegetation <- ifelse(grepl("G", fire$site), "grass", "non-grass")
+
+
+```
+
+
+```{r}
+
+
+ggplot(fire, aes(x = reserve, y = count)) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~month) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+
+ggplot(fire, aes(x = reserve, y = count, fill = vegetation)) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~month)+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+
+ggplot(fire, aes(x = reserve, y = count, fill = life_stage)) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~month)+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+```
+
