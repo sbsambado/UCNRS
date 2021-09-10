@@ -7,78 +7,59 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(prism)
+library(devtools) #needed to download prism from github
+library(reshape2) ##melting dataframes
+library(dplyr) #data wrangling
+library(raster) ##working with raster data
+library(sp) ##manipulationg spatial data
+library(ggplot2)
+library(tidyverse)
+
 ```
 
 PRISM
 >[Download and plot PRISM](https://cran.r-project.org/web/packages/prism/vignettes/prism.html#downloading-data)
 
-```{r}
+```{r message = FALSE}
 # install.packages("prism")
 library(prism)
-prism_set_dl_dir("~/Users/samanthasambado/Desktop/R Script/UCNRS/prismtmp")
+prism_set_dl_dir("~/Users/samanthasambado/Desktop/R Script/UCNRS/prismtemp")
 
-
-get_prism_dailys(
-  type = "tmean", 
-  minDate = "2020-12-01", 
-  maxDate = "2021-07-01", 
-  keepZip = FALSE
-)
-get_prism_monthlys(type = "tmean", year = 2019:2021, mon = 1, keepZip = FALSE)
-get_prism_annual("ppt", years = 2019:2021, keepZip = FALSE)
 ```
 
-nteract with the archive and prism data
-You can view all the prism data you have downloaded with a simple command: prism_archive_ls(). This function gives a list of folder names, i.e., prism data (pd). All the functions in the prism package work off of one or more of these folder names (pd).
 
+get prism normals
 ```{r}
-## Truncated to keep file list short
-prism_archive_ls()
 
+#################### tmeans ####################
 
-# While prism functions use this folder format, other files may need an absolute path (e.g. the raster package). The pd_to_file() function conveniently returns the absolute path. Alternatively, you may want to see what the normal name for the product is (not the file name), and we can get that with the pd_get_name() function.
-
-## Truncated to keep file list short
+# prism normals temp
+get_prism_normals(type = "tmean", resolution = "4km", mon = 1:6, keepZip = FALSE)
 pd_to_file(prism_archive_ls())
+## subset
 
-pd_get_name(prism_archive_ls())
-```
 
-Finally, prism_archive_subset() is a convenient way to search for specific parameters, time steps, days, months, years, or ranges of days, months, years.
-```{r}
-# we know we have downloaded June 2021 daily data, so lets search for those 
-prism_archive_subset("tmean", "daily", mon = 6)
-
-# or we can look for days between June 7 and June 10
-prism_archive_subset(
-  "tmean", "daily", minDate = "2021-06-01", maxDate = "2021-06-10"
+# one way to graph
+jmean <- prism_archive_subset(
+  "tmean", "monthly normals", mon = 1, resolution = "4km"
 )
-```
+pd_image(jmean)
 
-Raster plots
-You can easily make a quick plot of your data using the output of prism_archive_ls() or prism_archive_subset() with pd_image().
 
-```{r}
-# Plot the January 30-year average temperatures
-# grab only the first value, just in case multiple values are returned
-
-# jmean <- prism_archive_subset(
-#   "tmean", "monthly normals", mon = 1, resolution = "4km")
-# pd_image(jmean)
-
-```
-
-```{r}
-# library(raster)
+# another way to graph
 
 jnorm <- prism_archive_subset(
-  "tmean", "monthly normals", mon = 1, resolution = "4km")
-j2021 <- prism_archive_subset("tmean", "monthly", years = 2021, mon = 1)
+  "tmean", "monthly normals", mon = 1, resolution = "4km"
+)
 
+# select 2021
+
+j2021 <- prism_archive_subset("tmean", "monthly", years = 2021, mon = 1)
 
 # raster needs a full path, not the "short" prism data name
 jnorm <- pd_to_file(jnorm)
-
 j2021 <- pd_to_file(j2021)
 
 ## Now we'll load the rasters.
@@ -94,177 +75,767 @@ anomCalc <- function(x, y) {
 anom_rast <- raster::overlay(j2021_rast,jnorm_rast,fun = anomCalc)
 
 plot(anom_rast)
-```
 
-```{r}
-library(ggplot2)
-# data already exist in the prism dl dir
-boulder <- c(-105.2797, 40.0176)
 
-# prism_archive_subset() will return prism data that matches the specified 
-# variable, time step, years, months, days, etc.
-to_slice <- prism_archive_subset("tmean", "monthly", mon = 1)
-p <- pd_plot_slice(to_slice, boulder)
+#################### tdmean ####################
 
-# add a linear average and title
-p + 
-  stat_smooth(method="lm", se = FALSE) + 
-  theme_bw() + 
-  ggtitle("Average January temperature in Boulder, CO 1982-2014")
-#> `geom_smooth()` using formula 'y ~ x'
-```
+# prism normals tdmean
+get_prism_normals(type = "tdmean", resolution = "4km", mon = 1:6, keepZip = FALSE)
 
-```{r}
-library(leaflet)
-library(raster)
-library(prism)
+# one way to graph
 
-# 30-year normal average temperature have already been downloaded for 
-norm <- prism_archive_subset(
-  "tmean", "monthly normals", resolution = "4km"
+jmean_h <- prism_archive_subset(
+  "tdmean", "monthly normals", mon = 1, resolution = "4km"
 )
-rast <- raster(pd_to_file(norm))
+pd_image(jmean_h)
 
-# Create color palette and plot
-pal <- colorNumeric(
-  c("#0000FF", "#FFFF00", "#FF0000"), 
-  values(rast),
-  na.color = "transparent"
+
+# another way to graph
+
+jnorm_h <- prism_archive_subset(
+  "tdmean", "monthly normals", mon = 1, resolution = "4km"
 )
 
-leaflet() %>% 
-  addTiles(
-    urlTemplate = 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-  ) %>% 
-  addRasterImage(rast, colors = pal, opacity=.65) %>% 
-  addLegend(pal = pal, values = values(rast), title = "Deg C")
+# select 2021
+j2021_h <- prism_archive_subset("tdmean", "monthly", years = 2021, mon = 1)
+
+# raster needs a full path, not the "short" prism data name
+jnorm_h <- pd_to_file(jnorm_h)
+j2021_h <- pd_to_file(j2021_h)
+
+## Now we'll load the rasters.
+jnorm_rast_h <- raster(jnorm_h)
+j2021_rast_h <- raster(j2021)
+
+# Now we can do simple subtraction to get the anomaly by subtracting 2014 
+# from the 30 year normal map
+anomCalc <- function(x, y) {
+  return(x - y)
+}
+
+anom_rast_h <- raster::overlay(j2021_rast_h,jnorm_rast_h,fun = anomCalc)
+
+
+# plot both 
+plot(anom_rast)
+plot(anom_rast_h)
+
+
+```
+
+pull daily temperature & humidity
+```{r}
+
+
+# mean temperature
+get_prism_dailys(
+  type = "tmean", 
+  minDate = "2020-12-01", 
+  maxDate = "2021-07-01", 
+  keepZip = FALSE
+)
+get_prism_monthlys(type = "tmean", year = 2019:2021, mon = 1:12, keepZip = FALSE)
+get_prism_annual("ppt", years = 2019:2021, keepZip = FALSE)
+
+
+# humidity = tdmean
+
+get_prism_dailys(
+  type = "tdmean", 
+  minDate = "2020-12-01", 
+  maxDate = "2021-07-01", 
+  keepZip = FALSE
+)
+get_prism_monthlys(type = "tdmean", year = 2021, mon = 1:12, keepZip = FALSE)
+```
+
+nteract with the archive and prism data
+You can view all the prism data you have downloaded with a simple command: prism_archive_ls(). This function gives a list of folder names, i.e., prism data (pd). All the functions in the prism package work off of one or more of these folder names (pd).
+
+```{r message = FALSE}
+## Truncated to keep file list short
+prism_archive_ls()
+
+
+# While prism functions use this folder format, other files may need an absolute path (e.g. the raster package). The pd_to_file() function conveniently returns the absolute path. Alternatively, you may want to see what the normal name for the product is (not the file name), and we can get that with the pd_get_name() function.
+
+## Truncated to keep file list short
+pd_to_file(prism_archive_ls())
+
+pd_get_name(prism_archive_ls())
+```
+
+Finally, prism_archive_subset() is a convenient way to search for specific parameters, time steps, days, months, years, or ranges of days, months, years.
+
+*example*
+```{r message = FALSE}
+# we know we have downloaded June 2021 daily data, so lets search for those 
+# prism_archive_subset("tmean", "daily", mon = 6)
+
+# or we can look for days between June 7 and June 10
+# #prism_archive_subset(
+#   "tmean", "daily", minDate = "2021-06-01", maxDate = "2021-06-10"
+# )
+```
+
+Raster plots
+You can easily make a quick plot of your data using the output of prism_archive_ls() or prism_archive_subset() with pd_image().
+
+*example*
+```{r message = FALSE}
+# Plot the January 30-year average temperatures
+# grab only the first value, just in case multiple values are returned
+
+# jmean <- prism_archive_subset(
+#   "tmean", "monthly normals", mon = 1, resolution = "4km")
+# pd_image(jmean)
+
+```
+
+*example*
+```{r message = FALSE}
+# library(raster)
+
+# jnorm <- prism_archive_subset(
+#   "tmean", "monthly normals", mon = 1, resolution = "4km")
+# j2021 <- prism_archive_subset("tmean", "monthly", years = 2021, mon = 1)
+# 
+# 
+# # raster needs a full path, not the "short" prism data name
+# jnorm <- pd_to_file(jnorm)
+# 
+# j2021 <- pd_to_file(j2021)
+# 
+# ## Now we'll load the rasters.
+# jnorm_rast <- raster(jnorm)
+# j2021_rast <- raster(j2021)
+# 
+# # Now we can do simple subtraction to get the anomaly by subtracting 2014 
+# # from the 30 year normal map
+# anomCalc <- function(x, y) {
+#   return(x - y)
+# }
+# 
+# anom_rast <- raster::overlay(j2021_rast,jnorm_rast,fun = anomCalc)
+# 
+# plot(anom_rast)
+```
+*example*
+```{r}
+# library(ggplot2)
+# # data already exist in the prism dl dir
+# boulder <- c(-105.2797, 40.0176)
+# 
+# # prism_archive_subset() will return prism data that matches the specified 
+# # variable, time step, years, months, days, etc.
+# to_slice <- prism_archive_subset("tmean", "monthly", mon = 1)
+# p <- pd_plot_slice(to_slice, boulder)
+# 
+# # add a linear average and title
+# #p + 
+#   stat_smooth(method="lm", se = FALSE) + 
+#   theme_bw() + 
+#   ggtitle("Average January temperature in Boulder, CO 1982-2014")
+# #> `geom_smooth()` using formula 'y ~ x'
+
+```
+
+*example*
+```{r}
+# library(leaflet)
+# library(raster)
+# library(prism)
+# 
+# # 30-year normal average temperature have already been downloaded for 
+# norm <- prism_archive_subset(
+#   "tmean", "monthly normals", resolution = "4km"
+# )
+# rast <- raster(pd_to_file(norm))
+# 
+# # Create color palette and plot
+# pal <- colorNumeric(
+#   c("#0000FF", "#FFFF00", "#FF0000"), 
+#   values(rast),
+#   na.color = "transparent"
+# )
+# 
+# leaflet() %>% 
+#   addTiles(
+#     urlTemplate = 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+#   ) %>% 
+#   addRasterImage(rast, colors = pal, opacity=.65) %>% 
+#   addLegend(pal = pal, values = values(rast), title = "Deg C")
 ```
 
 >[R pubs prism](https://rpubs.com/collnell/get_prism)
 
 ```{r}
-library(devtools) #needed to download prism from github
-library(reshape2) ##melting dataframes
-library(dplyr) #data wrangling
-library(raster) ##working with raster data
-library(sp) ##manipulationg spatial data
-
-#install_github(repo = "prism", username = "ropensci")
-library(prism) ##prism data access
-
-
-#get_prism_monthlys(type = 'ppt', years=1990:2016, mon = 7, keepZip = TRUE)
-#ls_prism_data(name=TRUE)
-
-new_file<-c(1) ##change to corresponding file numbers
-RS <- prism_stack(ls_prism_data()[new_file,1]) ##raster file
-to_slice <- grep("_201607",RS[,1],value=T)##search through names
-
-
-df <- data.frame(rasterToPoints(RS)) ##creates a dataframe of points
-month.df <- melt(df, c("x", "y"))
-names(month.df)[1:2] <- c("lon", "lat") #rename columns
-
-
-library(ggplot2) #plotting
-library(ggmap) ##theme_nothing()
-
-ggplot()+
-  geom_raster(data=month.df, aes(x=lon, y=lat, fill=value))+
-  theme_nothing(legend = TRUE)+
-  scale_fill_gradient2("Precipitation\n(inches)", low='red',mid='lightblue',high = 'darkslateblue', midpoint=100)+
-  labs(title="July Precipitation: 30-year normals")+coord_fixed(ratio=1.3)
-
-
+# library(devtools) #needed to download prism from github
+# library(reshape2) ##melting dataframes
+# library(dplyr) #data wrangling
+# library(raster) ##working with raster data
+# library(sp) ##manipulationg spatial data
+# 
+# #install_github(repo = "prism", username = "ropensci")
+# library(prism) ##prism data access
+# 
+# 
+# #get_prism_monthlys(type = 'ppt', years=1990:2016, mon = 7, keepZip = TRUE)
+# #ls_prism_data(name=TRUE)
+# 
+# new_file<-c(1) ##change to corresponding file numbers
+# RS <- prism_stack(ls_prism_data()[new_file,1]) ##raster file
+# to_slice <- grep("_201607",RS[,1],value=T)##search through names
+# 
+# 
+# df <- data.frame(rasterToPoints(RS)) ##creates a dataframe of points
+# month.df <- melt(df, c("x", "y"))
+# names(month.df)[1:2] <- c("lon", "lat") #rename columns
+# 
+# 
+# library(ggplot2) #plotting
+# library(ggmap) ##theme_nothing()
+# 
+# ggplot()+
+#   geom_raster(data=month.df, aes(x=lon, y=lat, fill=value))+
+#   theme_nothing(legend = TRUE)+
+#   scale_fill_gradient2("Precipitation\n(inches)", low='red',mid='lightblue',high = 'darkslateblue', midpoint=100)+
+#   labs(title="July Precipitation: 30-year normals")+coord_fixed(ratio=1.3)
+# 
+# 
 ```
 
-Filter data to southern California
-SoCal is located approximately between 31 & 36 degrees latitude and -124 & -114 longitude.
 
-```{r}
-minLat=31
-maxLat=36
-minLon=-124
-maxLon=-114
+ Filter data to southern California
+*example*
+```{r} 
+# SoCal is located approximately between 31 & 36 degrees latitude and -124 & -114 longitude.
+# 
+# 
+# minLat=31
+# maxLat=36
+# minLon=-124
+# maxLon=-114
+# 
+# month.df.socal<-month.df%>%
+#   filter(minLat < lat, lat < maxLat, minLon < lon, lon <maxLon)%>%
+#   mutate(ppt = value) %>%
+#   select(-value)
+# 
+# dim(month.df)
+# dim(month.df.socal)
 
-month.df.socal<-month.df%>%
-  filter(minLat < lat, lat < maxLat, minLon < lon, lon <maxLon)%>%
-  mutate(ppt = value) %>%
-  select(-value)
-
-dim(month.df)
-dim(month.df.socal)
 ```
 
 Filter data to 2020
+*example*
 ```{r}
-month.df.socal$variable<-as.character(month.df.socal$variable)
-july2020<-filter(month.df.socal, grepl(pattern = '2020', variable, fixed=TRUE))
+# month.df.socal$variable<-as.character(month.df.socal$variable)
+# july2020<-filter(month.df.socal, grepl(pattern = '2020', variable, fixed=TRUE))
+# 
+# 
+# ggplot()+
+#   geom_raster(data=july2020, aes(x=lon, y=lat, fill=ppt))+
+#   theme_nothing(legend = TRUE)+
+#   scale_fill_gradient2("Precipitation\n(inches)", low='red',mid='lightblue',high = 'darkslateblue', midpoint=100)+
+#   labs(title="July Precipitation: 2016")+coord_fixed(ratio=1.3)
+# 
+# 
+# cities<-data.frame(cities =c('Irvine','LA', 'SD', 'Palm Springs'),
+#                    Lat = c(33.6694649, 34.0522342, 32.7153292, 33.8302961),
+#                    Long = c(-117.8231107, -118.2436849, -117.1572551, -116.5452921))
+# 
+# cities.spdf<-SpatialPointsDataFrame(coords=cities[,c('Long','Lat')], 
+#                        data=cities, proj4string = CRS("+proj=longlat +ellps=WGS84 +no_defs"))
+# 
+# city.clim<-extract(RS, cities.spdf,  fun=mean, na.rm=TRUE, sp=TRUE)
+```
 
 
-ggplot()+
-  geom_raster(data=july2020, aes(x=lon, y=lat, fill=ppt))+
-  theme_nothing(legend = TRUE)+
-  scale_fill_gradient2("Precipitation\n(inches)", low='red',mid='lightblue',high = 'darkslateblue', midpoint=100)+
-  labs(title="July Precipitation: 2016")+coord_fixed(ratio=1.3)
+*example*
+```{r}
+# library(tidyverse)
+# library(sf)
+# library(raster)
+# library(prism)
+# # 
+# 
+#county <- st_read("cb_2018_us_county_20m.shp")
+# 
+# 
+# county <- county %>%
+#   mutate(state = as.numeric(as.character(STATEFP)),
+#          fips = as.numeric(as.character(GEOID))) %>%
+#   filter(state != 2, state != 15, state < 60)
+# 
+# st_crs(county)
+# 
+# 
+# ggplot(data = county) +
+#   geom_sf(fill = NA)
+# 
+# 
+# options(prism.path = ".")
+# get_prism_normals(type = 'ppt', resolution = '4km', annual = T, keepZip = TRUE)
+# prism_archive_ls()
+# prism_p30 <- pd_stack(prism_archive_ls()[1]) 
+# county_wgs84 <- st_transform(county, crs(prism_p30))
+# st_crs(county_wgs84)
+# cnty_ras <- rasterize(county_wgs84, prism_p30, field = "fips")
+# cnty_p30 <- zonal(prism_p30, cnty_ras, fun = "mean")
+# 
+# cnty_p30 <- data.frame(cnty_p30)
+# summary(cnty_p30)
+# 
+# cnty_join1 <- left_join(county_wgs84, cnty_p30, 
+#                         by = c("fips" = "zone"))
+# 
+# ggplot(data = cnty_join1) +
+#   geom_sf(aes(fill = value)) +
+#   scale_fill_continuous(name = "Precip (mm)")
+# 
+# 
+# ca_join1 <- filter(cnty_join1, STATEFP == "06")
+# 
+# ggplot(data = ca_join1) +
+#   geom_sf(aes(fill = value)) +
+#   scale_fill_continuous(name = "Precip (mm)")
+```
 
 
-cities<-data.frame(cities =c('Irvine','LA', 'SD', 'Palm Springs'),
-                   Lat = c(33.6694649, 34.0522342, 32.7153292, 33.8302961),
-                   Long = c(-117.8231107, -118.2436849, -117.1572551, -116.5452921))
+getting prism data for reserves 
+```{r}
+# took plot 1 coordinates
+# longitude, latitude
+ford <- c(-121.77692, 36.684908)
+big_c <- c( -121.59829, 36.070161)
+hast <- c(-121.54774,36.38845)
+rancho <- c(-121.08241, 35.53549)
+sedg <- c(-120.04715, 34.69812)
+stunt <- c(-118.65601,34.09381)
 
-cities.spdf<-SpatialPointsDataFrame(coords=cities[,c('Long','Lat')], 
-                       data=cities, proj4string = CRS("+proj=longlat +ellps=WGS84 +no_defs"))
 
-city.clim<-extract(RS, cities.spdf,  fun=mean, na.rm=TRUE, sp=TRUE)
+# DAILY mean TEMP for 2021 month jan - june
+to_slice <- prism_archive_subset("tmean", "daily",  years = 2021, mon = 1:6)
+
+# MONTHLY mean TEMP for 2021 month jan - june
+# to_slice <- prism_archive_subset("tmean", "monthly",  years = 2021, mon = 1:6)
+
+
+# DAILY mean HUMIDITY for 2021 month jan - june
+to_slice_humid <- prism_archive_subset("tdmean", "daily",  years = 2021, mon = 1:6)
+
+
+```
+
+
+mapping each reserve temp
+```{r}
+# pd_plot_slice() returns a gg object
+
+## fort ord
+f <- pd_plot_slice(to_slice, ford)
+
+
+ft <- f +
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Fort Ord, CA 1:6")
+
+##  hastings
+h <- pd_plot_slice(to_slice, hast)
+
+# add a linear average and title
+ht <- h + 
+  geom_line()+
+  geom_point() +
+  #stat_smooth(method="lm", se = FALSE) + 
+  theme_bw() + 
+  ggtitle("Average January temperature in Hastings, CA 1:6")
+
+## big creek
+
+b <- pd_plot_slice(to_slice, big_c)
+
+bt <- b + 
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Big Creek, CA 1:6")
+
+
+## rancho 
+r <- pd_plot_slice(to_slice, rancho)
+
+rt <- r + 
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Rancho, CA 1:6")
+
+## sedgewick
+
+se <- pd_plot_slice(to_slice, sedg)
+
+set <- se + 
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Sedgwick, CA 1:6")
+
+
+## Stunt
+
+st <- pd_plot_slice(to_slice, stunt)
+
+stt <- st + 
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Stunt, CA 1:6")
+
+library(ggpubr)
+ggarrange(ft + ht, ncol = 1)
+
+?ggarrange()
+```
+
+try to make this one ggplot for temp
+```{r}
+
+full <- ggplot() +
+  geom_line(data = f, aes(x = date , y = data ), color = "red") +
+  geom_line(data = h, aes(x = date , y = data ), color = "orange") +
+  geom_line(data = b, aes(x = date , y = data ), color = "green") +
+  geom_line(data = r, aes(x = date , y = data ), color = "blue") +
+  geom_line(data = se, aes(x = date , y = data ), color = "purple") +
+  geom_line(data = st, aes(x = date , y = data ), color = "black") 
+
+full
+
+
+
+
+```
+
+mapping each reserve humidity
+```{r}
+## dew point = amoutn of moisture in ar
+## higher dew points, the higher of mositure content of the air at givnen temperature 
+
+
+## fort ord
+f_h <- pd_plot_slice(to_slice_humid, ford)
+
+f_h +
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Fort Ord, CA 1:6")
+
+##  hastings
+h_h <- pd_plot_slice(to_slice_humid, hast)
+
+# add a linear average and title
+h_h + 
+  geom_line()+
+  geom_point() +
+  #stat_smooth(method="lm", se = FALSE) + 
+  theme_bw() + 
+  ggtitle("Average January temperature in Hastings, CA 1:6")
+
+## big creek
+
+b_h <- pd_plot_slice(to_slice_humid, big_c)
+
+b_h + 
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Big Creek, CA 1:6")
+
+
+## rancho 
+r_h <- pd_plot_slice(to_slice_humid, rancho)
+
+r_h + 
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Rancho, CA 1:6")
+
+## sedgewick
+
+se_h <- pd_plot_slice(to_slice_humid, sedg)
+
+se_h + 
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Sedgwick, CA 1:6")
+
+
+## Stunt
+
+st_h <- pd_plot_slice(to_slice_humid, stunt)
+
+st_h + 
+  geom_line() +
+  geom_point() +
+  theme_bw() + 
+  ggtitle("Average January temperature in Stunt, CA 1:6")
+
+
+
+```
+
+
+```{r}
+
+
+#mystack <- pd_stack(prism_archive_ls()[1:10])
+
+#mystack$PRISM_tdmean_30yr_normal_4kmM2_06_bil
 ```
 
 ```{r}
-library(tidyverse)
-library(sf)
+library(rgdal)
 library(raster)
-library(prism)
+# rasnam<- "PRISM_ppt_30yr_normal_4kmM2_annual_bil.bil"
+# ras<-raster(rasnam) # identify as raster
+# prj<-toString(crs(ras)) #get raster projection
+# plot(ras)
+
+
+rasnam<- "PRISM_tdmean_early_4kmD2_20210701_bil.bil"
+ras<-raster(rasnam) # identify as raster
+prj<-toString(crs(ras)) #get raster projection
+plot(ras)
+
+
+rasnam<- "PRISM_tdmean_provisional_4kmD2_20210101_bil.bil"
+ras<-raster(rasnam) # identify as raster
+prj<-toString(crs(ras)) #get raster projection
+plot(ras)
+```
+
+>[download prism data](https://rstudio-pubs-static.s3.amazonaws.com/628527_e7e25d4ad6fc4ae8a6929c624dd33c40.html)
+
+```{r}
+# SoCal is located approximately between 31 & 36 degrees latitude and -124 & -114 longitude.
 # 
-
-county <- st_read("cb_2018_us_county_20m.shp")
-
-
-county <- county %>%
-  mutate(state = as.numeric(as.character(STATEFP)),
-         fips = as.numeric(as.character(GEOID))) %>%
-  filter(state != 2, state != 15, state < 60)
-
-st_crs(county)
+# 
+# minLat=31
+# maxLat=36
+# minLon=-124
+# maxLon=-114
 
 
-ggplot(data = county) +
-  geom_sf(fill = NA)
+# import raster 
+library(sf)
+## jan
+rasnam<- "PRISM_tdmean_provisional_4kmD2_20210101_bil.bil"
+ras<-raster(rasnam) # identify as raster
+prj<-toString(crs(ras)) #get raster projection
+plot(ras)
+
+## feb
+
+?coord_sf()
+rasnam<- "PRISM_tdmean_provisional_4kmD2_20210201_bil.bil"
+ras<-raster(rasnam) # identify as raster
+prj<-toString(crs(ras)) #get raster projection
+plot(ras)
+
+## march
+
+rasnam<- "PRISM_tdmean_provisional_4kmD2_20210301_bil.bil"
+ras<-raster(rasnam) # identify as raster
+prj<-toString(crs(ras)) #get raster projection
+plot(ras)
+
+## april
+
+rasnam<- "PRISM_tdmean_provisional_4kmD2_20210401_bil.bil"
+ras<-raster(rasnam) # identify as raster
+prj<-toString(crs(ras)) #get raster projection
+plot(ras)
 
 
-options(prism.path = ".")
-get_prism_normals(type = 'ppt', resolution = '4km', annual = T, keepZip = TRUE)
-prism_archive_ls()
-prism_p30 <- pd_stack(prism_archive_ls()[1]) 
-county_wgs84 <- st_transform(county, crs(prism_p30))
-st_crs(county_wgs84)
-cnty_ras <- rasterize(county_wgs84, prism_p30, field = "fips")
-cnty_p30 <- zonal(prism_p30, cnty_ras, fun = "mean")
+## may
 
-cnty_p30 <- data.frame(cnty_p30)
-summary(cnty_p30)
-
-cnty_join1 <- left_join(county_wgs84, cnty_p30, 
-                        by = c("fips" = "zone"))
-
-ggplot(data = cnty_join1) +
-  geom_sf(aes(fill = value)) +
-  scale_fill_continuous(name = "Precip (mm)")
+rasnam<- "PRISM_tdmean_provisional_4kmD2_20210501_bil.bil"
+ras<-raster(rasnam) # identify as raster
+prj<-toString(crs(ras)) #get raster projection
+plot(ras)
 
 
-ca_join1 <- filter(cnty_join1, STATEFP == "06")
+## june
+## feb
 
-ggplot(data = ca_join1) +
-  geom_sf(aes(fill = value)) +
-  scale_fill_continuous(name = "Precip (mm)")
+rasnam<- "PRISM_tdmean_provisional_4kmD2_20210601_bil.bil"
+ras<-raster(rasnam) # identify as raster
+prj<-toString(crs(ras)) #get raster projection
+plot(ras)
+
+```
+
+```{r}
+# Shapefile name in file directory
+shpfn<-"CA_State_TIGER2016.shp" 
+shp<-shapefile(shpfn)
+
+# Reproject shapefile based on raster projection
+shp_rp<-spTransform(shp,CRS(prj)) 
+
+grs<-matrix(unlist(cellFromPolygon(ras,shp_rp)),byrow=TRUE) 
+ng<-length(grs) #determine number of cells in basin
+
+# Determine raster cells inside shapefile
+# Get the geographic coordinates in cells inside basin
+geocoords<-xyFromCell(ras,grs) 
+
+# Determine the resolution of the dataset
+res<-geocoords[2,1]-geocoords[1,1] 
+
+# Generate empty matrix to store gridded monthly data
+pbgmn<-matrix(data=NA,nrow=ng,ncol=12) 
+
+# Generate empty matrix to store spatially averaged monthly data
+pavgmn<-matrix(data=NA,nrow=12,ncol=1) 
+
+
+
+## create a funciton to extract the mean
+
+mean_annual_precipitation_function<-function(shp){ # the input should be the name of the shapefile
+  shp<-shapefile(shp) #convert to shapefile object
+  shp_rp<-spTransform(shp,CRS(prj)) #reproject shape
+  pavgyr<-extract(ras,shp_rp,fun=mean) #get spatially averaged 30-year mean annual rainfall
+  return(pavgyr)
+}
+
+
+# extract mean annual precipitation
+
+# Call watershed boundary into work session
+CA<- "CA_State_TIGER2016.shp" 
+
+# Pass data contained in watershed boundary through function
+CA_precip<-mean_annual_precipitation_function(CA) 
+
+# Print results of function 
+CA_precip
+
+
+# export results to .csv
+y<-write.csv(CA_precip,"CA_annual_average_P.csv")
+
+```
+
+```{r}
+# setwd("~/Users/samanthasambado/Desktop/R Script/UCNRS/prismtemp")
+# 
+# 
+# nc<- 500 ## put the number of columns you expect the data in the files to have
+# nr<- 500## put roughly the number of rows times 12 (if you plan to read a year worth of data)
+#      ## PLUS some tolerance, so you'll end up with an object actually larger than needed
+# 
+# filenames <- list.files(path = "/.../Prism Weather Data All/", pattern = ".bil")
+# 
+# # initialize what is likely to be a large object
+# final.df<-as.data.frame(matrix(NA,ncol=c,nrow=nr)) 
+# counter=1
+# # loop through the files
+# for (i in filenames){
+#     r = raster(i)
+#     test <- as.data.frame(r, na.rm=TRUE)
+#     numrow2<-nrow(test)
+#     final.df[counter:counter+numrow2,]<-test
+#     counter<-counter+numrow2+1
+# }
+# 
+# final.df[counter-1:nrow(final.df),]<-NULL  ## remove empty rows
+# 
+# # write the csv
+# write.csv(final.df,"final-filename.csv")
+
+
+# Set years to process
+startingyear <- 2021       
+endingyear <- 2021
+total <- startingyear:endingyear
+
+# for (i in total) {
+#   year <- as.character(i)
+# 
+#   #  Make sure to set the correct path where *.hdr and *.bil are
+#   filenames <- list.files(path = ".../prismtmp/2021_BIL/tdmean/", 
+#                           pattern = paste(".*_", year, ".*\\.bil", sep = ""))
+# 
+#   # Assign raster file to object
+#   r1 = raster(filenames[1])
+#   r2 = raster(filenames[2])
+#   r3 = raster(filenames[3])
+#   r4 = raster(filenames[4])
+#   r5 = raster(filenames[5])
+#   r6 = raster(filenames[6])
+#   r7 = raster(filenames[7])
+#   r8 = raster(filenames[8])
+#   r9 = raster(filenames[9])
+#   r10 = raster(filenames[10])
+#   r11 = raster(filenames[11])
+#   r12 = raster(filenames[12])
+# 
+#   # Assign values from raster file to month object
+#   jan <- as.data.frame(r1, na.rm = TRUE)
+#   feb <- as.data.frame(r2, na.rm = TRUE)
+#   mar <- as.data.frame(r3, na.rm = TRUE)
+#   apr <- as.data.frame(r4, na.rm = TRUE)
+#   may <- as.data.frame(r5, na.rm = TRUE)
+#   jun <- as.data.frame(r6, na.rm = TRUE)
+#   jul <- as.data.frame(r7, na.rm = TRUE)
+#   aug <- as.data.frame(r8, na.rm = TRUE)
+#   sep <- as.data.frame(r9, na.rm = TRUE)
+#   oct <- as.data.frame(r10, na.rm = TRUE)
+#   nov <- as.data.frame(r11, na.rm = TRUE)
+#   dec <- as.data.frame(r12, na.rm = TRUE)
+# 
+#   # Bind all gridnumbers with monthly data to object
+#   jan <- cbind(gridNumber = rownames(jan), jan, stringsAsFactors = FALSE)
+#   feb <- cbind(gridNumber = rownames(feb), feb, stringsAsFactors = FALSE)
+#   mar <- cbind(gridNumber = rownames(mar), mar, stringsAsFactors = FALSE)
+#   apr <- cbind(gridNumber = rownames(apr), apr, stringsAsFactors = FALSE)
+#   may <- cbind(gridNumber = rownames(may), may, stringsAsFactors = FALSE)
+#   jun <- cbind(gridNumber = rownames(jun), jun, stringsAsFactors = FALSE)
+#   jul <- cbind(gridNumber = rownames(jul), jul, stringsAsFactors = FALSE)
+#   aug <- cbind(gridNumber = rownames(aug), aug, stringsAsFactors = FALSE)
+#   sep <- cbind(gridNumber = rownames(sep), sep, stringsAsFactors = FALSE)
+#   oct <- cbind(gridNumber = rownames(oct), oct, stringsAsFactors = FALSE)
+#   nov <- cbind(gridNumber = rownames(nov), nov, stringsAsFactors = FALSE)
+#   dec <- cbind(gridNumber = rownames(dec), dec, stringsAsFactors = FALSE)
+# 
+#   # Merge Monthly data
+#   month_list <- lapply(list(jan,feb,mar, apr, may, jun, jul, aug, sep, oct, nov, dec),setDT)
+#   for(j in seq_along(month_list)){
+#   set(month_list[[j]],j="ID",value = names(month_list[[j]])[2])
+#   setnames(month_list[[j]],  names(month_list[[j]])[2], "value")
+#   }
+# 
+#   # Faster processing of aggregated data
+#   long_data <- rbindlist(month_list)
+#   wide <- dcast.data.table(long_data, gridNumber~ID, value = 'value')
+#   wide$year <- year
+#   colnames(wide) <- c("gridNumber", "jan","feb","mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec", "year")
+# }
+
+# https://stackoverflow.com/questions/27432606/stacking-the-climate-data-downloaded-from-prism-in-r
+
+f <- list.files(pattern='.bil$', recursive=TRUE, full=TRUE)
+ s <- stack(f)
+ v <- rasterToPoints(s)
+ 
+ maybe <-as.data.frame(s)
 ```
 

@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(ggplot2)
 library(tidyverse)
+library(calecopal)
 ```
 
 ```{r}
@@ -55,7 +56,9 @@ ggplot(fire, aes(x = reserve, y = count)) +
   geom_histogram(stat = "identity") +
   facet_wrap(~month) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) +
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  labs(x = "Reserve", y = "Tick Count")
 
 ggplot(fire, aes(x = reserve, y = count, fill = vegetation)) +
   geom_histogram(stat = "identity") +
@@ -68,5 +71,107 @@ ggplot(fire, aes(x = reserve, y = count, fill = life_stage)) +
   facet_wrap(~month)+
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+
+
+grouped <-fire %>%
+  group_by(reserve, month, treatment) %>%
+  tally()
+
+ggplot(grouped, aes(x = reserve, y = n)) +
+  geom_boxplot() +
+  geom_point(aes(color = treatment)) +
+  facet_wrap(~month) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+
+ggplot(grouped, aes(x = reserve, y = n)) +
+  geom_boxplot() +
+  facet_wrap(~treatment) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+
+grouped_v <-fire %>%
+  group_by(reserve, month, vegetation) %>%
+  tally()
+
+
+ggplot(grouped_v, aes(x = reserve, y = n)) +
+  geom_boxplot() +
+  facet_wrap(~vegetation) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+
+```
+
+
+send to gage
+```{r}
+group_nomonth <- fire %>%
+  group_by(reserve, treatment) %>%
+  tally()
+
+ggplot(group_nomonth, aes(x = reserve, y = n, fill = reserve)) +
+  geom_histogram(stat = "identity")+
+  facet_wrap(~treatment) +
+  theme_bw() +
+  scale_fill_manual(values = c("#B5C861","#8AA789","#CB8573")) +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5))  +
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  labs(x = "Reserve", y = "Tick Count") +
+  guides(fill = FALSE)
+ggsave("FireTreatment.pdf", dpi = 320)
+
+
+
+group_month <- fire %>%
+  group_by(reserve, month) %>%
+  tally()
+
+ggplot(group_month, aes(x = reserve, y = n, fill = reserve)) +
+  geom_histogram(stat = "identity")+
+  facet_wrap(~month) +
+  scale_fill_manual(values = c("#B5C861","#8AA789","#CB8573")) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5))  +
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  labs(x = "Reserve", y = "Tick Count") +
+  guides(fill = FALSE)
+ggsave("FireMonth.pdf", dpi = 320)
+
+
+
+
+ggplot(fire, aes(x = reserve, y = count, fill = life_stage)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~month)+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5))  +
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  scale_fill_brewer(palette = "Dark2")+
+  labs(x = "Reserve", y = "Tick Count", fill = "Lifestage") 
+ggsave("FireLifestage.pdf", dpi = 320)
+
+```
+
+```{r}
+
+ggplot(fire, aes(x = reserve, y = count, fill = life_stage)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~treatment)+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5))  +
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  scale_fill_brewer(palette = "Dark2")+
+  labs(x = "Reserve", y = "Tick Count", fill = "Lifestage") 
+
+ggplot(fire, aes(x = reserve, y = count, fill = treatment)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~life_stage)+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5))  +
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  scale_fill_brewer(palette = "Dark2")+
+  labs(x = "Reserve", y = "Tick Count", fill = "Lifestage") 
+
 ```
 
