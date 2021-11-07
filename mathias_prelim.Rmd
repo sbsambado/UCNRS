@@ -5,14 +5,8 @@ date: "5/4/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 
-```
-
-
-
-```{r message = FALSE, warning = FALSE}
+```{r message = FALSE, warning = FALSE, message = FALSE}
 
 
 library(readr)
@@ -87,7 +81,7 @@ ggplot(tick_counts_sp, aes(x = reserve, y = count, fill = guess))+
   coord_flip() +
   theme_bw() +
   theme(legend.position = "bottom")
-ggsave("TickCount_ReserveMonth_rough.jpeg", dpi = 320)
+#ggsave("TickCount_ReserveMonth_rough.jpeg", dpi = 320)
 
 ggplot(tick_counts, aes(x = reserve, y = count))+
   geom_histogram(stat = "identity") +
@@ -99,8 +93,9 @@ ggplot(tick_counts, aes(x = reserve, y = count))+
   scale_fill_manual(values = cal_palette("collinsia", n = 2, type = "continuous"))+
   coord_flip() +
   theme_bw() +
-  theme(legend.position = "bottom")
-ggsave("TickCount_ReserveMonth_rough.jpeg", dpi = 320)
+  theme(legend.position = "bottom") +
+  theme(axis.text.y =   element_text(size = 5))
+ggsave("TickCount_ReserveMonth_rough_v2.jpeg", dpi = 320)
 ```
 
 summary
@@ -109,7 +104,6 @@ summary
 
 library(dplyr)
 library(tangram)
-install.packages("purrrlyr")
 library(purrrlyr)
 library(gtsummary)
 library(gt)
@@ -126,7 +120,72 @@ tick_counts2 <- prelim %>%
 
 ```
 
+mathias fire proposal
+```{r}
 
+tick_counts_sp_f <- tick_counts_sp[which(tick_counts_sp$reserve == "Big Creek" |
+         tick_counts_sp$reserve == "Hastings" |
+         tick_counts_sp$reserve == "McLaughlin"),]
+
+
+tick_counts_sp_f$guess <- factor(tick_counts_sp_f$guess,
+                          levels = c("J","A"))
+ggplot(tick_counts_sp_f, aes(x = reserve, y = count, fill = guess)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~month)+
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, vjust = .5))  +
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  scale_fill_manual(values = c("sienna3","slateblue4"))+
+  #scale_fill_brewer(palette = "Dark2")+
+  labs(x = "Reserve", y = "Tick Count", fill = "Lifestage") 
+#ggsave("MathiasFireLifestageMonth.png", dpi = 320)
+```
+
+Density plots
+```{r}
+
+tick_counts
+
+
+density <- smol_juv %>%#aggregate.smol.MWMA %>%
+  filter(region == "Midwest")
+
+tick_counts %>%
+  ggplot(aes(x = month, group_by = reserve,fill = reserve)) +
+  geom_density(alpha = 0.9) +
+  theme_bw() 
+
+# week 21 = May 24
+# week 25 = Jun 21
+# week 27 = July 5
+# week 29 = July 19
+# week 37 = Sep 13
+
+min(density$week)
+max(density$week)
+
+library(ggupset)
+library(hrbrthemes)
+library(viridis)
+library(plyr)
+
+mu <- ddply(density, "sexOrAge", summarise, grp.mean = mean(week))
+head(mu)
+
+
+tick_counts %>%
+  ggplot(aes(x = month, fill = reserve)) +
+  geom_density(alpha = 0.3) +
+  #scale_fill_manual(values = c("#69b3a2", "#404080")) +
+  theme_classic() +
+  labs(fill = "", x = "Month", y = "Density", title = "Midwest Tick Phenology")+
+  theme(legend.position = "bottom") +
+  #geom_vline(data = mu, aes(xintercept = grp.mean, color = sexOrAge), linetype = "dashed") +
+  guides(color = FALSE) +
+  geom_vline(xintercept = 5, color = "red", linetype = "dashed", size = 1)
+
+```
 
 
 ### Lizard data
@@ -201,6 +260,13 @@ regioncolor = c('brown1','tan1','lightgoldenrod1')
 locationcolor = c('darkseagreen1', 'brown')
 ```
 
+try to make liz long so each juvenile tick has it's own column
+```{r}
+
+
+data.frame(liz[rep(seq_len(dim(liz)[1]), liz$count), 2, drop = FALSE], row.names=NULL)
+
+```
 
 
 ```{r}
@@ -300,7 +366,7 @@ ggsave("LizBurdens_LocationFacet_v2.jpeg", dpi = 320)
 
 
 liz_counts <-liz %>%
-  group_by(reserve), round) %>%
+  group_by(reserve, round) %>%
   summarise(freq = length(liz), .groups = 'drop')
 
 ggplot(liz_counts, aes(y = freq, x = reserve, fill = month)) +
@@ -444,7 +510,6 @@ ggplot(liz, aes(x = month, y = log(burden + 1))) +
   facet_wrap(~reserve)
 
 
-aggregate(liz ~ reserve, data = liz, FUN = sum)
 ```
 devtools::install_github("awhstin/awtools")
 

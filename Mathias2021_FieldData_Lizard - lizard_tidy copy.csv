@@ -1,0 +1,1030 @@
+reserve,round,date,lizard_num,count,lifestage
+Sedgwick,2,2021-03-21,1,0,larval
+Sedgwick,2,2021-03-21,1,3,nymphal
+Sedgwick,2,2021-03-21,2,16,larval
+Sedgwick,2,2021-03-21,2,4,nymphal
+Sedgwick,2,2021-03-21,3,1,larval
+Sedgwick,2,2021-03-21,3,1,nymphal
+Sedgwick,2,2021-03-21,4,3,larval
+Sedgwick,2,2021-03-21,4,3,nymphal
+Sedgwick,2,2021-03-21,5,0,larval
+Sedgwick,2,2021-03-21,5,8,nymphal
+Sedgwick,2,2021-03-21,6,4,larval
+Sedgwick,2,2021-03-21,6,6,nymphal
+Sedgwick,2,2021-03-21,7,2,larval
+Sedgwick,2,2021-03-21,7,3,nymphal
+Sedgwick,2,2021-03-21,8,0,larval
+Sedgwick,2,2021-03-21,8,16,nymphal
+Coal Oil Point,2,2021-03-23,1,0,larval
+Coal Oil Point,2,2021-03-23,1,1,nymphal
+Stunt Ranch,2,2021-03-24,1,0,larval
+Stunt Ranch,2,2021-03-24,1,0,nymphal
+Stunt Ranch,2,2021-03-24,2,0,larval
+Stunt Ranch,2,2021-03-24,2,1,nymphal
+Stunt Ranch,2,2021-03-24,3,0,larval
+Stunt Ranch,2,2021-03-24,3,5,nymphal
+Stunt Ranch,2,2021-03-24,4,0,larval
+Stunt Ranch,2,2021-03-24,4,1,nymphal
+Stunt Ranch,2,2021-03-24,5,0,larval
+Stunt Ranch,2,2021-03-24,5,0,nymphal
+Stunt Ranch,2,2021-03-24,6,0,larval
+Stunt Ranch,2,2021-03-24,6,2,nymphal
+Stunt Ranch,2,2021-03-24,7,1,larval
+Stunt Ranch,2,2021-03-24,7,0,nymphal
+Stunt Ranch,2,2021-03-24,8,0,larval
+Stunt Ranch,2,2021-03-24,8,0,nymphal
+Stunt Ranch,2,2021-03-24,9,2,larval
+Stunt Ranch,2,2021-03-24,9,1,nymphal
+McLaughlin,3,2021-04-07,1,1,larval
+McLaughlin,3,2021-04-07,1,20,nymphal
+McLaughlin,3,2021-04-07,2,0,larval
+McLaughlin,3,2021-04-07,2,2,nymphal
+McLaughlin,3,2021-04-07,3,12,larval
+McLaughlin,3,2021-04-07,3,2,nymphal
+McLaughlin,3,2021-04-07,4,1,larval
+McLaughlin,3,2021-04-07,4,2,nymphal
+McLaughlin,3,2021-04-07,5,6,larval
+McLaughlin,3,2021-04-07,5,2,nymphal
+McLaughlin,3,2021-04-07,6,5,larval
+McLaughlin,3,2021-04-07,6,4,nymphal
+Quail Ridge,3,2021-04-08,1,2,larval
+Quail Ridge,3,2021-04-08,1,8,nymphal
+Quail Ridge,3,2021-04-08,2,4,larval
+Quail Ridge,3,2021-04-08,2,14,nymphal
+Quail Ridge,3,2021-04-08,3,5,larval
+Quail Ridge,3,2021-04-08,3,14,nymphal
+Quail Ridge,3,2021-04-08,4,0,larval
+Quail Ridge,3,2021-04-08,4,0,nymphal
+Fort Ord,3,2021-04-10,1,1,larval
+Fort Ord,3,2021-04-10,1,0,nymphal
+Fort Ord,3,2021-04-10,2,0,larval
+Fort Ord,3,2021-04-10,2,0,nymphal
+Hastings,3,2021-04-10,1,0,larval
+Hastings,3,2021-04-10,1,2,nymphal
+Hastings,3,2021-04-10,2,25,larval
+Hastings,3,2021-04-10,2,12,nymphal
+Hastings,3,2021-04-10,3,0,larval
+Hastings,3,2021-04-10,3,3,nymphal
+Hastings,3,2021-04-10,4,0,larval
+Hastings,3,2021-04-10,4,0,nymphal
+Hastings,3,2021-04-10,5,0,larval
+Hastings,3,2021-04-10,5,2,nymphal
+Hastings,3,2021-04-10,6,0,larval
+Hastings,3,2021-04-10,6,0,nymphal
+Hastings,3,2021-04-10,7,7,larval
+Hastings,3,2021-04-10,7,7,nymphal
+Rancho Marino,3,2021-04-11,1,13,larval
+Rancho Marino,3,2021-04-11,1,11,nymphal
+Rancho Marino,3,2021-04-11,2,1,larval
+Rancho Marino,3,2021-04-11,2,3,nymphal
+Rancho Marino,3,2021-04-11,3,2,larval
+Rancho Marino,3,2021-04-11,3,9,nymphal
+Rancho Marino,3,2021-04-11,4,0,larval
+Rancho Marino,3,2021-04-11,4,3,nymphal
+Rancho Marino,3,2021-04-11,5,18,larval
+Rancho Marino,3,2021-04-11,5,11,nymphal
+Rancho Marino,3,2021-04-11,6,4,larval
+Rancho Marino,3,2021-04-11,6,14,nymphal
+Rancho Marino,3,2021-04-11,7,2,larval
+Rancho Marino,3,2021-04-11,7,10,nymphal
+Rancho Marino,3,2021-04-11,8,22,larval
+Rancho Marino,3,2021-04-11,8,19,nymphal
+Rancho Marino,3,2021-04-11,9,7,larval
+Rancho Marino,3,2021-04-11,9,21,nymphal
+Rancho Marino,3,2021-04-11,10,4,larval
+Rancho Marino,3,2021-04-11,10,2,nymphal
+Rancho Marino,3,2021-04-11,11,9,larval
+Rancho Marino,3,2021-04-11,11,18,nymphal
+Rancho Marino,3,2021-04-11,12,14,larval
+Rancho Marino,3,2021-04-11,12,25,nymphal
+Rancho Marino,3,2021-04-11,13,4,larval
+Rancho Marino,3,2021-04-11,13,14,nymphal
+Rancho Marino,3,2021-04-11,14,5,larval
+Rancho Marino,3,2021-04-11,14,4,nymphal
+Rancho Marino,3,2021-04-11,15,7,larval
+Rancho Marino,3,2021-04-11,15,11,nymphal
+Big Creek,3,2021-04-12,1,0,larval
+Big Creek,3,2021-04-12,1,5,nymphal
+Big Creek,3,2021-04-12,2,0,larval
+Big Creek,3,2021-04-12,2,4,nymphal
+Big Creek,3,2021-04-12,3,0,larval
+Big Creek,3,2021-04-12,3,2,nymphal
+Big Creek,3,2021-04-12,4,0,larval
+Big Creek,3,2021-04-12,4,0,nymphal
+Big Creek,3,2021-04-12,5,2,larval
+Big Creek,3,2021-04-12,5,1,nymphal
+Big Creek,3,2021-04-12,6,2,larval
+Big Creek,3,2021-04-12,6,0,nymphal
+Big Creek,3,2021-04-12,7,1,larval
+Big Creek,3,2021-04-12,7,0,nymphal
+Big Creek,3,2021-04-12,8,0,larval
+Big Creek,3,2021-04-12,8,0,nymphal
+Big Creek,3,2021-04-12,9,0,larval
+Big Creek,3,2021-04-12,9,0,nymphal
+Big Creek,3,2021-04-12,10,0,larval
+Big Creek,3,2021-04-12,10,1,nymphal
+Big Creek,3,2021-04-12,11,1,larval
+Big Creek,3,2021-04-12,11,0,nymphal
+Big Creek,3,2021-04-12,12,1,larval
+Big Creek,3,2021-04-12,12,1,nymphal
+Stunt Ranch,3,2021-04-14,1,2,larval
+Stunt Ranch,3,2021-04-14,1,3,nymphal
+Stunt Ranch,3,2021-04-14,2,0,larval
+Stunt Ranch,3,2021-04-14,2,1,nymphal
+Stunt Ranch,3,2021-04-14,3,0,larval
+Stunt Ranch,3,2021-04-14,3,1,nymphal
+Stunt Ranch,3,2021-04-14,4,1,larval
+Stunt Ranch,3,2021-04-14,4,2,nymphal
+Stunt Ranch,3,2021-04-14,5,0,larval
+Stunt Ranch,3,2021-04-14,5,1,nymphal
+Stunt Ranch,3,2021-04-14,6,1,larval
+Stunt Ranch,3,2021-04-14,6,1,nymphal
+Stunt Ranch,3,2021-04-14,7,2,larval
+Stunt Ranch,3,2021-04-14,7,5,nymphal
+Stunt Ranch,3,2021-04-14,8,0,larval
+Stunt Ranch,3,2021-04-14,8,0,nymphal
+Stunt Ranch,3,2021-04-14,9,0,larval
+Stunt Ranch,3,2021-04-14,9,2,nymphal
+Stunt Ranch,3,2021-04-14,10,0,larval
+Stunt Ranch,3,2021-04-14,10,4,nymphal
+Stunt Ranch,3,2021-04-14,11,1,larval
+Stunt Ranch,3,2021-04-14,11,2,nymphal
+Stunt Ranch,3,2021-04-14,12,2,larval
+Stunt Ranch,3,2021-04-14,12,2,nymphal
+Stunt Ranch,3,2021-04-14,13,0,larval
+Stunt Ranch,3,2021-04-14,13,4,nymphal
+Stunt Ranch,3,2021-04-14,14,6,larval
+Stunt Ranch,3,2021-04-14,14,1,nymphal
+Stunt Ranch,3,2021-04-14,15,0,larval
+Stunt Ranch,3,2021-04-14,15,8,nymphal
+Sedgwick,3,2021-04-15,1,4,larval
+Sedgwick,3,2021-04-15,1,3,nymphal
+Sedgwick,3,2021-04-15,2,6,larval
+Sedgwick,3,2021-04-15,2,2,nymphal
+Sedgwick,3,2021-04-15,3,1,larval
+Sedgwick,3,2021-04-15,3,3,nymphal
+Sedgwick,3,2021-04-15,4,2,larval
+Sedgwick,3,2021-04-15,4,0,nymphal
+Sedgwick,3,2021-04-15,5,2,larval
+Sedgwick,3,2021-04-15,5,12,nymphal
+Sedgwick,3,2021-04-15,6,2,larval
+Sedgwick,3,2021-04-15,6,13,nymphal
+Sedgwick,3,2021-04-15,7,0,larval
+Sedgwick,3,2021-04-15,7,0,nymphal
+Sedgwick,3,2021-04-15,8,3,larval
+Sedgwick,3,2021-04-15,8,4,nymphal
+Sedgwick,3,2021-04-15,9,1,larval
+Sedgwick,3,2021-04-15,9,0,nymphal
+Coal Oil Point,3,2021-04-16,1,0,larval
+Coal Oil Point,3,2021-04-16,1,1,nymphal
+Santa Cruz Island,3,2021-04-17,1,0,larval
+Santa Cruz Island,3,2021-04-17,1,0,nymphal
+Santa Cruz Island,3,2021-04-17,2,0,larval
+Santa Cruz Island,3,2021-04-17,2,2,nymphal
+Santa Cruz Island,3,2021-04-17,3,0,larval
+Santa Cruz Island,3,2021-04-17,3,4,nymphal
+McLaughlin,4,2021-05-05,1,1,larval
+McLaughlin,4,2021-05-05,1,1,nymphal
+McLaughlin,4,2021-05-05,2,2,larval
+McLaughlin,4,2021-05-05,2,2,nymphal
+McLaughlin,4,2021-05-05,3,0,larval
+McLaughlin,4,2021-05-05,3,5,nymphal
+McLaughlin,4,2021-05-05,4,3,larval
+McLaughlin,4,2021-05-05,4,10,nymphal
+Quail Ridge,4,2021-05-06,1,8,larval
+Quail Ridge,4,2021-05-06,1,17,nymphal
+Quail Ridge,4,2021-05-06,2,6,larval
+Quail Ridge,4,2021-05-06,2,3,nymphal
+Fort Ord,4,2021-05-07,1,7,larval
+Fort Ord,4,2021-05-07,1,2,nymphal
+Fort Ord,4,2021-05-07,2,1,larval
+Fort Ord,4,2021-05-07,2,2,nymphal
+Fort Ord,4,2021-05-07,3,1,larval
+Fort Ord,4,2021-05-07,3,0,nymphal
+Fort Ord,4,2021-05-07,4,0,larval
+Fort Ord,4,2021-05-07,4,2,nymphal
+Fort Ord,4,2021-05-07,5,6,larval
+Fort Ord,4,2021-05-07,5,1,nymphal
+Fort Ord,4,2021-05-07,6,10,larval
+Fort Ord,4,2021-05-07,6,1,nymphal
+Fort Ord,4,2021-05-07,7,0,larval
+Fort Ord,4,2021-05-07,7,0,nymphal
+Fort Ord,4,2021-05-07,8,20,larval
+Fort Ord,4,2021-05-07,8,4,nymphal
+Fort Ord,4,2021-05-07,9,36,larval
+Fort Ord,4,2021-05-07,9,8,nymphal
+Fort Ord,4,2021-05-07,10,10,larval
+Fort Ord,4,2021-05-07,10,4,nymphal
+Fort Ord,4,2021-05-07,11,2,larval
+Fort Ord,4,2021-05-07,11,1,nymphal
+Fort Ord,4,2021-05-07,12,0,larval
+Fort Ord,4,2021-05-07,12,0,nymphal
+Fort Ord,4,2021-05-07,13,0,larval
+Fort Ord,4,2021-05-07,13,0,nymphal
+Fort Ord,4,2021-05-07,14,0,larval
+Fort Ord,4,2021-05-07,14,0,nymphal
+Fort Ord,4,2021-05-07,15,14,larval
+Fort Ord,4,2021-05-07,15,4,nymphal
+Hastings,4,2021-05-09,1,2,larval
+Hastings,4,2021-05-09,1,0,nymphal
+Hastings,4,2021-05-09,2,7,larval
+Hastings,4,2021-05-09,2,8,nymphal
+Hastings,4,2021-05-09,3,0,larval
+Hastings,4,2021-05-09,3,0,nymphal
+Hastings,4,2021-05-09,4,0,larval
+Hastings,4,2021-05-09,4,0,nymphal
+Hastings,4,2021-05-09,5,0,larval
+Hastings,4,2021-05-09,5,2,nymphal
+Hastings,4,2021-05-09,6,0,larval
+Hastings,4,2021-05-09,6,0,nymphal
+Hastings,4,2021-05-09,7,14,larval
+Hastings,4,2021-05-09,7,12,nymphal
+Hastings,4,2021-05-09,8,1,larval
+Hastings,4,2021-05-09,8,0,nymphal
+Hastings,4,2021-05-09,9,1,larval
+Hastings,4,2021-05-09,9,2,nymphal
+Hastings,4,2021-05-09,10,0,larval
+Hastings,4,2021-05-09,10,2,nymphal
+Hastings,4,2021-05-09,11,0,larval
+Hastings,4,2021-05-09,11,0,nymphal
+Hastings,4,2021-05-09,12,9,larval
+Hastings,4,2021-05-09,12,3,nymphal
+Hastings,4,2021-05-09,13,16,larval
+Hastings,4,2021-05-09,13,2,nymphal
+Hastings,4,2021-05-09,14,15,larval
+Hastings,4,2021-05-09,14,1,nymphal
+Hastings,4,2021-05-09,15,1,larval
+Hastings,4,2021-05-09,15,2,nymphal
+Big Creek,4,2021-05-10,1,0,larval
+Big Creek,4,2021-05-10,1,0,nymphal
+Big Creek,4,2021-05-10,2,0,larval
+Big Creek,4,2021-05-10,2,0,nymphal
+Big Creek,4,2021-05-10,3,0,larval
+Big Creek,4,2021-05-10,3,1,nymphal
+Big Creek,4,2021-05-10,4,0,larval
+Big Creek,4,2021-05-10,4,1,nymphal
+Big Creek,4,2021-05-10,5,2,larval
+Big Creek,4,2021-05-10,5,1,nymphal
+Big Creek,4,2021-05-10,6,2,larval
+Big Creek,4,2021-05-10,6,1,nymphal
+Big Creek,4,2021-05-10,7,0,larval
+Big Creek,4,2021-05-10,7,4,nymphal
+Big Creek,4,2021-05-10,8,3,larval
+Big Creek,4,2021-05-10,8,2,nymphal
+Big Creek,4,2021-05-10,9,0,larval
+Big Creek,4,2021-05-10,9,1,nymphal
+Big Creek,4,2021-05-10,10,2,larval
+Big Creek,4,2021-05-10,10,7,nymphal
+Big Creek,4,2021-05-10,11,0,larval
+Big Creek,4,2021-05-10,11,1,nymphal
+Big Creek,4,2021-05-10,12,2,larval
+Big Creek,4,2021-05-10,12,5,nymphal
+Big Creek,4,2021-05-10,13,1,larval
+Big Creek,4,2021-05-10,13,0,nymphal
+Big Creek,4,2021-05-10,14,2,larval
+Big Creek,4,2021-05-10,14,0,nymphal
+Big Creek,4,2021-05-10,15,0,larval
+Big Creek,4,2021-05-10,15,0,nymphal
+Big Creek,4,2021-05-10,1,4,larval
+Big Creek,4,2021-05-10,1,13,nymphal
+Big Creek,4,2021-05-10,2,1,larval
+Big Creek,4,2021-05-10,2,5,nymphal
+Big Creek,4,2021-05-10,3,1,larval
+Big Creek,4,2021-05-10,3,9,nymphal
+Big Creek,4,2021-05-10,4,4,larval
+Big Creek,4,2021-05-10,4,5,nymphal
+Big Creek,4,2021-05-10,5,37,larval
+Big Creek,4,2021-05-10,5,12,nymphal
+Big Creek,4,2021-05-10,6,10,larval
+Big Creek,4,2021-05-10,6,11,nymphal
+Big Creek,4,2021-05-10,7,12,larval
+Big Creek,4,2021-05-10,7,2,nymphal
+Big Creek,4,2021-05-10,8,13,larval
+Big Creek,4,2021-05-10,8,10,nymphal
+Big Creek,4,2021-05-10,9,8,larval
+Big Creek,4,2021-05-10,9,4,nymphal
+Big Creek,4,2021-05-10,10,1,larval
+Big Creek,4,2021-05-10,10,3,nymphal
+Big Creek,4,2021-05-10,11,6,larval
+Big Creek,4,2021-05-10,11,2,nymphal
+Big Creek,4,2021-05-10,12,6,larval
+Big Creek,4,2021-05-10,12,4,nymphal
+Big Creek,4,2021-05-10,13,0,larval
+Big Creek,4,2021-05-10,13,0,nymphal
+Big Creek,4,2021-05-10,14,0,larval
+Big Creek,4,2021-05-10,14,4,nymphal
+Big Creek,4,2021-05-10,15,0,larval
+Big Creek,4,2021-05-10,15,0,nymphal
+Stunt Ranch,4,2021-05-12,1,0,larval
+Stunt Ranch,4,2021-05-12,1,1,nymphal
+Stunt Ranch,4,2021-05-12,2,0,larval
+Stunt Ranch,4,2021-05-12,2,0,nymphal
+Stunt Ranch,4,2021-05-12,3,0,larval
+Stunt Ranch,4,2021-05-12,3,0,nymphal
+Stunt Ranch,4,2021-05-12,4,0,larval
+Stunt Ranch,4,2021-05-12,4,0,nymphal
+Stunt Ranch,4,2021-05-12,5,0,larval
+Stunt Ranch,4,2021-05-12,5,0,nymphal
+Stunt Ranch,4,2021-05-12,6,0,larval
+Stunt Ranch,4,2021-05-12,6,0,nymphal
+Stunt Ranch,4,2021-05-12,7,0,larval
+Stunt Ranch,4,2021-05-12,7,0,nymphal
+Stunt Ranch,4,2021-05-12,8,0,larval
+Stunt Ranch,4,2021-05-12,8,0,nymphal
+Stunt Ranch,4,2021-05-12,9,0,larval
+Stunt Ranch,4,2021-05-12,9,0,nymphal
+Stunt Ranch,4,2021-05-12,10,0,larval
+Stunt Ranch,4,2021-05-12,10,0,nymphal
+Stunt Ranch,4,2021-05-12,11,0,larval
+Stunt Ranch,4,2021-05-12,11,0,nymphal
+Stunt Ranch,4,2021-05-12,12,0,larval
+Stunt Ranch,4,2021-05-12,12,0,nymphal
+Sedgwick,4,2021-05-13,1,0,larval
+Sedgwick,4,2021-05-13,1,3,nymphal
+Sedgwick,4,2021-05-13,2,0,larval
+Sedgwick,4,2021-05-13,2,0,nymphal
+Sedgwick,4,2021-05-13,3,0,larval
+Sedgwick,4,2021-05-13,3,4,nymphal
+Sedgwick,4,2021-05-13,4,0,larval
+Sedgwick,4,2021-05-13,4,1,nymphal
+Sedgwick,4,2021-05-13,5,0,larval
+Sedgwick,4,2021-05-13,5,0,nymphal
+Sedgwick,4,2021-05-13,6,0,larval
+Sedgwick,4,2021-05-13,6,2,nymphal
+Sedgwick,4,2021-05-13,7,0,larval
+Sedgwick,4,2021-05-13,7,3,nymphal
+Sedgwick,4,2021-05-13,8,0,larval
+Sedgwick,4,2021-05-13,8,0,nymphal
+Coal Oil Point,4,2021-05-15,1,0,larval
+Coal Oil Point,4,2021-05-15,1,0,nymphal
+Coal Oil Point,4,2021-05-15,2,0,larval
+Coal Oil Point,4,2021-05-15,2,0,nymphal
+Coal Oil Point,4,2021-05-15,3,0,larval
+Coal Oil Point,4,2021-05-15,3,1,nymphal
+Coal Oil Point,4,2021-05-15,4,0,larval
+Coal Oil Point,4,2021-05-15,4,0,nymphal
+Coal Oil Point,4,2021-05-15,5,0,larval
+Coal Oil Point,4,2021-05-15,5,0,nymphal
+Coal Oil Point,4,2021-05-15,6,0,larval
+Coal Oil Point,4,2021-05-15,6,0,nymphal
+Coal Oil Point,4,2021-05-15,7,0,larval
+Coal Oil Point,4,2021-05-15,7,0,nymphal
+Coal Oil Point,4,2021-05-15,8,0,larval
+Coal Oil Point,4,2021-05-15,8,0,nymphal
+Santa Cruz Island,4,2021-05-16,1,0,larval
+Santa Cruz Island,4,2021-05-16,1,0,nymphal
+Santa Cruz Island,4,2021-05-16,2,0,larval
+Santa Cruz Island,4,2021-05-16,2,8,nymphal
+Santa Cruz Island,4,2021-05-16,3,1,larval
+Santa Cruz Island,4,2021-05-16,3,1,nymphal
+Santa Cruz Island,4,2021-05-16,4,0,larval
+Santa Cruz Island,4,2021-05-16,4,0,nymphal
+Santa Cruz Island,4,2021-05-16,5,0,larval
+Santa Cruz Island,4,2021-05-16,5,0,nymphal
+Santa Cruz Island,4,2021-05-16,6,0,larval
+Santa Cruz Island,4,2021-05-16,6,0,nymphal
+Santa Cruz Island,4,2021-05-16,7,0,larval
+Santa Cruz Island,4,2021-05-16,7,1,nymphal
+Santa Cruz Island,4,2021-05-16,8,1,larval
+Santa Cruz Island,4,2021-05-16,8,1,nymphal
+McLaughlin,5,2021-06-02,1,0,larval
+McLaughlin,5,2021-06-02,1,1,nymphal
+McLaughlin,5,2021-06-02,2,0,larval
+McLaughlin,5,2021-06-02,2,0,nymphal
+Quail Ridge,5,2021-06-02,1,5,larval
+Quail Ridge,5,2021-06-02,1,0,nymphal
+Quail Ridge,5,2021-06-02,2,0,larval
+Quail Ridge,5,2021-06-02,2,1,nymphal
+Fort Ord,5,2021-06-05,1,3,larval
+Fort Ord,5,2021-06-05,1,2,nymphal
+Fort Ord,5,2021-06-05,2,11,larval
+Fort Ord,5,2021-06-05,2,2,nymphal
+Fort Ord,5,2021-06-05,3,7,larval
+Fort Ord,5,2021-06-05,3,6,nymphal
+Fort Ord,5,2021-06-05,4,1,larval
+Fort Ord,5,2021-06-05,4,0,nymphal
+Fort Ord,5,2021-06-05,5,4,larval
+Fort Ord,5,2021-06-05,5,1,nymphal
+Fort Ord,5,2021-06-05,6,8,larval
+Fort Ord,5,2021-06-05,6,6,nymphal
+Fort Ord,5,2021-06-05,7,0,larval
+Fort Ord,5,2021-06-05,7,0,nymphal
+Fort Ord,5,2021-06-05,8,0,larval
+Fort Ord,5,2021-06-05,8,1,nymphal
+Fort Ord,5,2021-06-05,9,1,larval
+Fort Ord,5,2021-06-05,9,2,nymphal
+Fort Ord,5,2021-06-05,10,13,larval
+Fort Ord,5,2021-06-05,10,1,nymphal
+Fort Ord,5,2021-06-05,11,0,larval
+Fort Ord,5,2021-06-05,11,0,nymphal
+Fort Ord,5,2021-06-05,12,11,larval
+Fort Ord,5,2021-06-05,12,1,nymphal
+Fort Ord,5,2021-06-05,13,13,larval
+Fort Ord,5,2021-06-05,13,2,nymphal
+Fort Ord,5,2021-06-05,14,4,larval
+Fort Ord,5,2021-06-05,14,1,nymphal
+Fort Ord,5,2021-06-05,15,17,larval
+Fort Ord,5,2021-06-05,15,1,nymphal
+Hastings,5,2021-06-06,1,0,larval
+Hastings,5,2021-06-06,1,0,nymphal
+Hastings,5,2021-06-06,2,0,larval
+Hastings,5,2021-06-06,2,0,nymphal
+Hastings,5,2021-06-06,3,0,larval
+Hastings,5,2021-06-06,3,5,nymphal
+Hastings,5,2021-06-06,4,0,larval
+Hastings,5,2021-06-06,4,1,nymphal
+Hastings,5,2021-06-06,5,0,larval
+Hastings,5,2021-06-06,5,1,nymphal
+Hastings,5,2021-06-06,6,0,larval
+Hastings,5,2021-06-06,6,2,nymphal
+Hastings,5,2021-06-06,7,1,larval
+Hastings,5,2021-06-06,7,0,nymphal
+Hastings,5,2021-06-06,8,0,larval
+Hastings,5,2021-06-06,8,1,nymphal
+Hastings,5,2021-06-06,9,0,larval
+Hastings,5,2021-06-06,9,0,nymphal
+Hastings,5,2021-06-06,10,0,larval
+Hastings,5,2021-06-06,10,0,nymphal
+Hastings,5,2021-06-06,11,0,larval
+Hastings,5,2021-06-06,11,0,nymphal
+Hastings,5,2021-06-06,12,0,larval
+Hastings,5,2021-06-06,12,4,nymphal
+Hastings,5,2021-06-06,13,0,larval
+Hastings,5,2021-06-06,13,2,nymphal
+Hastings,5,2021-06-06,14,1,larval
+Hastings,5,2021-06-06,14,2,nymphal
+Hastings,5,2021-06-06,15,0,larval
+Hastings,5,2021-06-06,15,4,nymphal
+Big Creek,5,2021-06-07,1,0,larval
+Big Creek,5,2021-06-07,1,1,nymphal
+Big Creek,5,2021-06-07,2,0,larval
+Big Creek,5,2021-06-07,2,0,nymphal
+Big Creek,5,2021-06-07,3,0,larval
+Big Creek,5,2021-06-07,3,0,nymphal
+Big Creek,5,2021-06-07,4,0,larval
+Big Creek,5,2021-06-07,4,0,nymphal
+Big Creek,5,2021-06-07,5,0,larval
+Big Creek,5,2021-06-07,5,0,nymphal
+Big Creek,5,2021-06-07,6,4,larval
+Big Creek,5,2021-06-07,6,2,nymphal
+Big Creek,5,2021-06-07,7,0,larval
+Big Creek,5,2021-06-07,7,2,nymphal
+Big Creek,5,2021-06-07,8,0,larval
+Big Creek,5,2021-06-07,8,0,nymphal
+Big Creek,5,2021-06-07,9,0,larval
+Big Creek,5,2021-06-07,9,0,nymphal
+Big Creek,5,2021-06-07,10,0,larval
+Big Creek,5,2021-06-07,10,0,nymphal
+Big Creek,5,2021-06-07,11,0,larval
+Big Creek,5,2021-06-07,11,1,nymphal
+Big Creek,5,2021-06-07,12,0,larval
+Big Creek,5,2021-06-07,12,0,nymphal
+Big Creek,5,2021-06-07,13,1,larval
+Big Creek,5,2021-06-07,13,0,nymphal
+Big Creek,5,2021-06-07,14,0,larval
+Big Creek,5,2021-06-07,14,0,nymphal
+Big Creek,5,2021-06-07,15,0,larval
+Big Creek,5,2021-06-07,15,0,nymphal
+Rancho Marino,5,2021-06-08,1,4,larval
+Rancho Marino,5,2021-06-08,1,2,nymphal
+Rancho Marino,5,2021-06-08,2,0,larval
+Rancho Marino,5,2021-06-08,2,3,nymphal
+Rancho Marino,5,2021-06-08,3,0,larval
+Rancho Marino,5,2021-06-08,3,2,nymphal
+Rancho Marino,5,2021-06-08,4,1,larval
+Rancho Marino,5,2021-06-08,4,5,nymphal
+Rancho Marino,5,2021-06-08,5,0,larval
+Rancho Marino,5,2021-06-08,5,3,nymphal
+Rancho Marino,5,2021-06-08,6,2,larval
+Rancho Marino,5,2021-06-08,6,6,nymphal
+Rancho Marino,5,2021-06-08,7,3,larval
+Rancho Marino,5,2021-06-08,7,3,nymphal
+Rancho Marino,5,2021-06-08,8,11,larval
+Rancho Marino,5,2021-06-08,8,8,nymphal
+Rancho Marino,5,2021-06-08,9,2,larval
+Rancho Marino,5,2021-06-08,9,2,nymphal
+Rancho Marino,5,2021-06-08,10,1,larval
+Rancho Marino,5,2021-06-08,10,4,nymphal
+Rancho Marino,5,2021-06-08,11,0,larval
+Rancho Marino,5,2021-06-08,11,0,nymphal
+Rancho Marino,5,2021-06-08,12,1,larval
+Rancho Marino,5,2021-06-08,12,0,nymphal
+Rancho Marino,5,2021-06-08,13,0,larval
+Rancho Marino,5,2021-06-08,13,2,nymphal
+Rancho Marino,5,2021-06-08,14,0,larval
+Rancho Marino,5,2021-06-08,14,3,nymphal
+Rancho Marino,5,2021-06-08,15,0,larval
+Rancho Marino,5,2021-06-08,15,7,nymphal
+Sedgwick,5,2021-06-09,1,0,larval
+Sedgwick,5,2021-06-09,1,0,nymphal
+Sedgwick,5,2021-06-09,2,0,larval
+Sedgwick,5,2021-06-09,2,1,nymphal
+Sedgwick,5,2021-06-09,3,1,larval
+Sedgwick,5,2021-06-09,3,2,nymphal
+Sedgwick,5,2021-06-09,4,0,larval
+Sedgwick,5,2021-06-09,4,1,nymphal
+Sedgwick,5,2021-06-09,5,0,larval
+Sedgwick,5,2021-06-09,5,1,nymphal
+Sedgwick,5,2021-06-09,6,0,larval
+Sedgwick,5,2021-06-09,6,2,nymphal
+Sedgwick,5,2021-06-09,7,0,larval
+Sedgwick,5,2021-06-09,7,0,nymphal
+Sedgwick,5,2021-06-09,8,1,larval
+Sedgwick,5,2021-06-09,8,1,nymphal
+Sedgwick,5,2021-06-09,9,0,larval
+Sedgwick,5,2021-06-09,9,0,nymphal
+Sedgwick,5,2021-06-09,10,0,larval
+Sedgwick,5,2021-06-09,10,1,nymphal
+Sedgwick,5,2021-06-09,11,0,larval
+Sedgwick,5,2021-06-09,11,0,nymphal
+Sedgwick,5,2021-06-09,12,11,larval
+Sedgwick,5,2021-06-09,12,0,nymphal
+Coal Oil Point,5,2021-06-10,1,0,larval
+Coal Oil Point,5,2021-06-10,1,0,nymphal
+Coal Oil Point,5,2021-06-10,2,0,larval
+Coal Oil Point,5,2021-06-10,2,0,nymphal
+Stunt Ranch,5,2021-06-11,1,0,larval
+Stunt Ranch,5,2021-06-11,1,0,nymphal
+Stunt Ranch,5,2021-06-11,2,0,larval
+Stunt Ranch,5,2021-06-11,2,0,nymphal
+Stunt Ranch,5,2021-06-11,3,0,larval
+Stunt Ranch,5,2021-06-11,3,2,nymphal
+Stunt Ranch,5,2021-06-11,4,0,larval
+Stunt Ranch,5,2021-06-11,4,0,nymphal
+Stunt Ranch,5,2021-06-11,5,0,larval
+Stunt Ranch,5,2021-06-11,5,3,nymphal
+Stunt Ranch,5,2021-06-11,6,2,larval
+Stunt Ranch,5,2021-06-11,6,1,nymphal
+Stunt Ranch,5,2021-06-11,7,0,larval
+Stunt Ranch,5,2021-06-11,7,2,nymphal
+Stunt Ranch,5,2021-06-11,8,0,larval
+Stunt Ranch,5,2021-06-11,8,0,nymphal
+Stunt Ranch,5,2021-06-11,9,0,larval
+Stunt Ranch,5,2021-06-11,9,1,nymphal
+Stunt Ranch,5,2021-06-11,10,0,larval
+Stunt Ranch,5,2021-06-11,10,0,nymphal
+Stunt Ranch,5,2021-06-11,11,0,larval
+Stunt Ranch,5,2021-06-11,11,3,nymphal
+Stunt Ranch,5,2021-06-11,12,0,larval
+Stunt Ranch,5,2021-06-11,12,1,nymphal
+Stunt Ranch,5,2021-06-11,13,0,larval
+Stunt Ranch,5,2021-06-11,13,1,nymphal
+Stunt Ranch,5,2021-06-11,14,0,larval
+Stunt Ranch,5,2021-06-11,14,0,nymphal
+Stunt Ranch,5,2021-06-11,15,0,larval
+Stunt Ranch,5,2021-06-11,15,1,nymphal
+Santa Cruz Island,5,2021-06-12,1,2,larval
+Santa Cruz Island,5,2021-06-12,1,3,nymphal
+Santa Cruz Island,5,2021-06-12,2,0,larval
+Santa Cruz Island,5,2021-06-12,2,1,nymphal
+Santa Cruz Island,5,2021-06-12,3,0,larval
+Santa Cruz Island,5,2021-06-12,3,2,nymphal
+Santa Cruz Island,5,2021-06-12,4,0,larval
+Santa Cruz Island,5,2021-06-12,4,1,nymphal
+Santa Cruz Island,5,2021-06-12,5,1,larval
+Santa Cruz Island,5,2021-06-12,5,0,nymphal
+Santa Cruz Island,5,2021-06-12,6,0,larval
+Santa Cruz Island,5,2021-06-12,6,0,nymphal
+Santa Cruz Island,5,2021-06-12,7,0,larval
+Santa Cruz Island,5,2021-06-12,7,0,nymphal
+Santa Cruz Island,5,2021-06-12,8,0,larval
+Santa Cruz Island,5,2021-06-12,8,0,nymphal
+Santa Cruz Island,5,2021-06-12,9,0,larval
+Santa Cruz Island,5,2021-06-12,9,0,nymphal
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+Rancho Marino,4,2021-05-11,1,4,larval
+Rancho Marino,4,2021-05-11,1,13,nymphal
+Rancho Marino,4,2021-05-11,2,1,larval
+Rancho Marino,4,2021-05-11,2,5,nymphal
+Rancho Marino,4,2021-05-11,3,1,larval
+Rancho Marino,4,2021-05-11,3,9,nymphal
+Rancho Marino,4,2021-05-11,4,4,larval
+Rancho Marino,4,2021-05-11,4,5,nymphal
+Rancho Marino,4,2021-05-11,5,37,larval
+Rancho Marino,4,2021-05-11,5,12,nymphal
+Rancho Marino,4,2021-05-11,6,10,larval
+Rancho Marino,4,2021-05-11,6,11,nymphal
+Rancho Marino,4,2021-05-11,7,12,larval
+Rancho Marino,4,2021-05-11,7,2,nymphal
+Rancho Marino,4,2021-05-11,8,13,larval
+Rancho Marino,4,2021-05-11,8,10,nymphal
+Rancho Marino,4,2021-05-11,9,8,larval
+Rancho Marino,4,2021-05-11,9,4,nymphal
+Rancho Marino,4,2021-05-11,10,1,larval
+Rancho Marino,4,2021-05-11,10,3,nymphal
+Rancho Marino,4,2021-05-11,11,6,larval
+Rancho Marino,4,2021-05-11,11,2,nymphal
+Rancho Marino,4,2021-05-11,12,6,larval
+Rancho Marino,4,2021-05-11,12,4,nymphal
+Rancho Marino,4,2021-05-11,13,0,larval
+Rancho Marino,4,2021-05-11,13,0,nymphal
+Rancho Marino,4,2021-05-11,14,0,larval
+Rancho Marino,4,2021-05-11,14,4,nymphal
+Rancho Marino,4,2021-05-11,15,0,larval
+Rancho Marino,4,2021-05-11,15,0,nymphal

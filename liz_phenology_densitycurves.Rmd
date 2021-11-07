@@ -1,0 +1,292 @@
+---
+title: "lizard density plots"
+author: "sbsambado"
+date: "10/31/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Import and tidy data
+```{r}
+tidy <- read_csv("Mathias2021_FieldData_Lizard - lizard_tidy copy.csv")
+
+dim(tidy)
+
+tidy$round <- as.factor(tidy$round)
+
+
+tidy$region <- tidy$reserve
+
+tidy$region[tidy$reserve == "McLaughlin"] <- "northern"
+tidy$region[tidy$reserve == "Quail Ridge"] <- "northern"
+tidy$region[tidy$reserve == "Point Reyes"] <- "northern"
+
+tidy$region[tidy$reserve == "Fort Ord"] <- "central"
+tidy$region[tidy$reserve == "Hastings"] <- "central"
+tidy$region[tidy$reserve == "Big Creek"] <- "central"
+tidy$region[tidy$reserve == "Rancho Marino"] <- "central"
+
+tidy$region[tidy$reserve == "Sedgwick"] <- "southern"
+tidy$region[tidy$reserve == "Coal Oil Point"] <- "southern"
+tidy$region[tidy$reserve == "Stunt Ranch"] <- "southern"
+tidy$region[tidy$reserve == "Santa Cruz Island"] <- "southern"
+
+
+tidy$reserve <- factor(tidy$reserve,
+                      levels = c("McLaughlin", "Quail Ridge", "Point Reyes",
+                                 "Fort Ord", "Hastings", 
+                                 "Big Creek", "Rancho Marino",
+                                 "Sedgwick", "Coal Oil Point",
+                                 "Stunt Ranch", "Santa Cruz Island"))
+
+
+
+tidy$location <- tidy$region
+
+tidy$location[tidy$reserve == "McLaughlin"] <- "inland"
+tidy$location[tidy$reserve == "Quail Ridge"] <- "inland"
+tidy$location[tidy$reserve == "Point Reyes"] <- "coastal"
+
+tidy$location[tidy$reserve == "Fort Ord"] <- "coastal"
+tidy$location[tidy$reserve == "Hastings"] <- "inland"
+tidy$location[tidy$reserve == "Big Creek"] <- "coastal"
+tidy$location[tidy$reserve == "Rancho Marino"] <- "coastal"
+
+tidy$location[tidy$reserve == "Sedgwick"] <- "inland"
+tidy$location[tidy$reserve == "Coal Oil Point"] <- "coastal"
+tidy$location[tidy$reserve == "Stunt Ranch"] <- "inland"
+tidy$location[tidy$reserve == "Santa Cruz Island"] <- "inland"
+
+
+tidy$month <- NA
+
+tidy$month[tidy$round == "2"] <- "March"
+tidy$month[tidy$round == "3"] <- "April"
+tidy$month[tidy$round == "4"] <- "May"
+tidy$month[tidy$round == "5"] <- "June"
+
+tidy$month <- factor(tidy$month, 
+                    levels = c("March", "April", "May", "June"))
+
+tidy$region <- factor(tidy$region, 
+                     levels = c("northern", "central", "southern"))
+
+
+regioncolor = c('brown1','tan1','lightgoldenrod1')
+locationcolor = c('darkseagreen1', 'brown')
+
+dim(tidy)
+```
+
+try to make tidy long so each juvenile tick has it's own column
+```{r}
+tidy$count <- as.numeric(tidy$count)
+tidy <- na.omit(tidy)
+tidy <-as.tibble(tidy)
+
+tidy_uncount<-uncount(tidy, count)
+dim(tidy_uncount)
+
+
+tidy_uncount %>%
+  ggplot(aes(x = month, group_by = lifestage,fill = lifestage))+
+  geom_density(alpha = 0.5) +
+  theme_bw() +
+  facet_wrap(~reserve)
+
+tidy_uncount %>%
+  group_by(month, reserve, lizard_num, lifestage)%>%
+  ggplot(aes(x = as.numeric(month), group_by = lifestage,fill = lifestage))+
+  geom_density(alpha = 0.5) +
+  theme_bw() +
+  facet_wrap(~reserve, scale = "free_y")
+
+
+
+
+```
+## good code for phenology
+tidy_uncount_select %>%
+  group_by(month, reserve, lizard_num, lifestage)%>%
+  ggplot(aes(x = as.numeric(month), group_by = lifestage,fill = lifestage))+
+  geom_density(alpha = 0.5) +
+  theme_bw() +
+  facet_wrap(~reserve, scale = "free_y")
+  
+  
+Now select a couple good lizard burdens
+```{r}
+tidy_uncount_select <- tidy_uncount[which(tidy_uncount$reserve != "Coal Oil Point" |
+         tidy_uncount$reserve != "Santa Cruz Island"),]
+
+tidy_uncount_select %>%
+  group_by(month, reserve, lizard_num, lifestage)%>%
+  ggplot(aes(x = as.numeric(month), group_by = lifestage,fill = lifestage))+
+  geom_density(alpha = 0.5) +
+  theme_bw() +
+  facet_wrap(~reserve, scale = "free_y")
+
+# region
+tidy_uncount_select %>%
+  group_by(month, region, lizard_num, lifestage)%>%
+  ggplot(aes(x = as.numeric(month), group_by = lifestage,fill = lifestage))+
+  geom_density(alpha = 0.3) +
+  theme_bw() +
+  facet_wrap(~region, scale = "free_y", ncol = 1) +
+  scale_fill_manual(values = c("yellow", "red")) +
+  scale_x_continuous(labels=c("March","April","May","June")) +
+  labs(x = "Month", y = "Density")
+ 
+# location 
+tidy_uncount_select %>%
+  group_by(month, location, lizard_num, lifestage)%>%
+  ggplot(aes(x = as.numeric(month), group_by = lifestage,fill = lifestage))+
+  geom_density(alpha = 0.3) +
+  theme_bw() +
+  facet_wrap(~location, scale = "free_y", ncol = 1) +
+  #scale_fill_manual(values = c("yellow", "red")) +
+  scale_x_continuous(labels=c("March","April","May","June")) +
+  labs(x = "Month", y = "Density")
+
+tidy_uncount_select %>%
+  group_by(month, reserve,lifestage)%>% #  lizard_num, ?
+  filter(reserve != "Coal Oil Point" & reserve !="Santa Cruz Island") %>%
+  ggplot(aes(x = as.numeric(month), group_by = lifestage,fill = lifestage))+
+  geom_density(alpha = 0.5) +
+  theme_bw() +
+  facet_wrap(~reserve, scale = "free_y", ncol = 4) +
+  #scale_fill_manual(values = c("yellow", "red")) +
+  scale_x_continuous(labels=c("March","April","May","June")) +
+  labs(x = "Month", y = "Density")
+
+
+
+```
+
+non density plots
+
+geom_bar with counts
+```{r}
+
+
+
+tidy %>%
+  group_by(month, reserve,lifestage)%>% #  lizard_num, ?
+  filter(reserve != "Coal Oil Point" & reserve !="Santa Cruz Island") %>%
+  ggplot(aes(x = month, y = count, group_by = lifestage,fill = lifestage))+
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  facet_wrap(~reserve, scale = "free_y", ncol = 4) +
+  #scale_fill_manual(values = c("yellow", "red")) +
+  #scale_x_discrete(labels=c("March","April","May","June")) +
+  labs(x = "Month", y = "Density")
+
+r <- tidy %>%
+  group_by(month, region,lifestage)%>% #  lizard_num, ?
+  filter(reserve != "Coal Oil Point" & reserve !="Santa Cruz Island") %>%
+  ggplot(aes(x = month, y = count, group_by = lifestage,fill = lifestage))+
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  facet_wrap(~region, scale = "free_y", ncol = 1) +
+  #scale_fill_manual(values = c("yellow", "red")) +
+  #scale_x_discrete(labels=c("March","April","May","June")) +
+  labs(x = "Month", y = "Density") +
+  guides(fill = FALSE)
+
+l <-tidy %>%
+  group_by(month, location,lifestage)%>% #  lizard_num, ?
+  filter(reserve != "Coal Oil Point" & reserve !="Santa Cruz Island") %>%
+  ggplot(aes(x = month, y = count, group_by = lifestage,fill = lifestage))+
+  geom_bar(stat = "identity") +
+  theme_bw() +
+  facet_wrap(~location, scale = "free_y", ncol = 1) +
+  #scale_fill_manual(values = c("yellow", "red")) +
+  #scale_x_discrete(labels=c("March","April","May","June")) +
+  labs(x = "Month", y = "Density")
+
+bi <- ggarrange(r,l)
+
+bi + rremove("legend")
+
+```
+
+
+
+geom_bar with proportions
+```{r}
+
+library(scales)
+
+tidy_uncount %>%
+  filter(region == "central") %>%
+ggplot(aes(month, color = lifestage, fill = lifestage)) +
+  geom_bar(aes(y=..prop.., group = 1)) +
+  scale_y_continuous(labels=percent_format()) +
+  facet_wrap(~lifestage, ncol = 1)
+
+tidy_uncount %>%
+  filter(region == "southern") %>%
+ggplot(aes(month, color = lifestage, fill = lifestage)) +
+  geom_bar(aes(y=..prop.., group = 1)) +
+  scale_y_continuous(labels=percent_format()) +
+  facet_wrap(~lifestage, ncol = 1)
+
+i <-tidy_uncount %>%
+  filter(location == "inland") %>%
+ggplot(aes(month, color = lifestage, fill = lifestage)) +
+  geom_bar(aes(y=..prop.., group = 1)) +
+  scale_y_continuous(labels=percent_format()) +
+  facet_wrap(~lifestage)+
+  theme_bw() +
+  guides(color = FALSE, fill = FALSE) +
+  theme(axis.title = element_blank(),
+        strip.text.x = element_text(face = 'bold'),
+        strip.background = element_rect(fill = 'gray95'))  +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+
+c<- tidy_uncount %>%
+  filter(location == "coastal") %>%
+ggplot(aes(month, color = lifestage, fill = lifestage)) +
+  geom_bar(aes(y=..prop.., group = 1)) +
+  scale_y_continuous(labels=percent_format()) +
+  facet_wrap(~lifestage) +
+  guides(color = FALSE, fill = FALSE) +
+  theme_bw()+
+  theme(axis.title.x  = element_blank(),strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95'))+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1))
+
+library(ggpubr)
+library(gridExtra)
+library(cowplot)
+plot_grid(c,i,
+             ncol = 1, nrow = 2,
+               labels = c("coastal","inland"),
+          align = "v")
+
+```
+
+proportions
+```{r}
+tidy_uncount %>%
+  filter(reserve != "Coal Oil Point" & reserve !="Santa Cruz Island") %>%
+ggplot(aes(month, fill = lifestage)) +
+    geom_bar(aes(y=..count../sum(..count..))) +
+  facet_wrap(~reserve, ncol = 2, scale = "free_y")+
+  theme_bw() 
+
+ggplot(tidy_uncount, aes(month, fill = lifestage)) +
+  geom_bar(aes(y=..count../sum(..count..))) +
+  scale_y_continuous(labels=percent_format()) +
+  facet_wrap(~region, ncol = 1, scale = "free_y")+
+  theme_bw() 
+
+ggplot(tidy_uncount, aes(month, fill = lifestage)) +
+  geom_bar(aes(y=..count../sum(..count..))) +
+  scale_y_continuous(labels=percent_format()) +
+  facet_wrap(~location, ncol = 1, scale = "free_y")+
+  theme_bw() 
+```
+

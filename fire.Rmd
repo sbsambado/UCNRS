@@ -89,6 +89,7 @@ ggplot(grouped, aes(x = reserve, y = n)) +
   facet_wrap(~treatment) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+ggsave("FireTreatment.png", dpi = 320)
 
 grouped_v <-fire %>%
   group_by(reserve, month, vegetation) %>%
@@ -100,6 +101,8 @@ ggplot(grouped_v, aes(x = reserve, y = n)) +
   facet_wrap(~vegetation) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, vjust = .5)) 
+#ggsave("FireVegetation.png", dpi = 320)
+
 
 ```
 
@@ -119,7 +122,7 @@ ggplot(group_nomonth, aes(x = reserve, y = n, fill = reserve)) +
   theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
   labs(x = "Reserve", y = "Tick Count") +
   guides(fill = FALSE)
-ggsave("FireTreatment.pdf", dpi = 320)
+#ggsave("FireTreatment.pdf", dpi = 320)
 
 
 
@@ -136,7 +139,7 @@ ggplot(group_month, aes(x = reserve, y = n, fill = reserve)) +
   theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
   labs(x = "Reserve", y = "Tick Count") +
   guides(fill = FALSE)
-ggsave("FireMonth.pdf", dpi = 320)
+#ggsave("FireMonth.pdf", dpi = 320)
 
 
 
@@ -155,14 +158,24 @@ ggsave("FireLifestage.pdf", dpi = 320)
 
 ```{r}
 
-ggplot(fire, aes(x = reserve, y = count, fill = life_stage)) +
+
+treatment <- as_labeller(c("unburned" = "Unburned", "burned" = "Burned"))
+
+fire_c <- aggregate(count ~ reserve + treatment + life_stage, data = fire, FUN = sum)
+  
+fire_c$life_stage <- factor(fire_c$life_stage,
+                          levels = c("L","N","A"))
+ggplot(fire_c, aes(x = reserve, y = count, fill = life_stage)) +
   geom_bar(stat = "identity") +
-  facet_wrap(~treatment)+
+  facet_wrap(~treatment, labeller = treatment)+
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, vjust = .5))  +
   theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
-  scale_fill_brewer(palette = "Dark2")+
+  scale_fill_manual(values = c("aquamarine3","salmon1","slateblue4"))+
+  #scale_fill_brewer(palette = "Dark2")+
   labs(x = "Reserve", y = "Tick Count", fill = "Lifestage") 
+ggsave("MathiasFireLifestage.png", dpi = 320)
+
 
 ggplot(fire, aes(x = reserve, y = count, fill = treatment)) +
   geom_bar(stat = "identity") +

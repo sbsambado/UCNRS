@@ -1,0 +1,12 @@
+name	lat	long	plot_name
+McLaughlin	38.87289	-122.432648	Office
+Quail Ridge	38.488989	-122.151711	Horse Trailer
+Point Reyes	37.970556	-122.731797	Weather Station
+Fort Ord	36.684908	-121.77692	Parking Spot
+Hastings	36.38845	-121.54774	Ravine
+Big Creek	36.058876	-121.588237	Cliff
+Rancho Marino	35.53549	-121.08241	Far Barn
+Sedgwick	34.69812	-120.04715	Kate's place
+Coal Oil	34.4163	-119.8779	OG
+Stunt Ranch	34.09381	-118.65601	Ravine Trail
+Santa Cruz Island	34.001384	-119.71451	Canyon Hot Spot
