@@ -1,0 +1,61 @@
+﻿project,reserve,plot_name,plot_number,latitude,longitude,notes,sampled_trip1,sampled_trip2,sampled_trip3,sampled_trip4,sampled_trip5,vegetation type
+fire_davis,Quail Ridge,recovering canopy,1,38.49357,-122.15179,,N,N,N,Y,Y,forest
+fire_davis,Quail Ridge,completely burned canopy,2,38.4905,-122.14857,,N,N,N,Y,Y,forest
+fire_davis,Quail Ridge,no canopy,3,38.48475,-122.14906,,N,N,N,Y,Y,grass
+mathias,McLaughlin,Office,1,38.87289,-122.432648,,Y,Y,Y,Y,Y,forest
+mathias,McLaughlin,Reservoir,3,38.86663,-122.427708,,Y,Y,Y,Y,Y,forest
+mathias,McLaughlin,Camp Ground,2,38.874401,-122.424331,,Y,Y,Y,Y,Y,forest
+fire_gage,McLaughlin,ML BURN G01 ,,38.86475632,-122.4284145,,N,N,Y,Y,Y,grass
+fire_gage,McLaughlin,ML BURN G02 ,,38.8644618,-122.4283308,,N,N,Y,Y,Y,grass
+fire_gage,McLaughlin,ML BURN O01 ,,38.86385592,-122.4291117,,N,N,Y,Y,Y,forest
+fire_gage,McLaughlin,ML BURN O02 ,,38.86184064,-122.4296687,,N,N,Y,Y,Y,forest
+fire_gage,McLaughlin,ML UNBURN G03 ,,38.87101422,-122.4301239,,N,N,Y,Y,Y,grass
+fire_gage,McLaughlin,ML UNBURN G04 ,,38.87163943,-122.4212221,,N,N,Y,Y,Y,grass
+fire_gage,McLaughlin,ML UNBURN O02,,38.87170755,-122.4289845,,N,N,Y,Y,Y,forest
+fire_gage,McLaughlin,ML UNBURN O03 ,,38.87019113,-122.4306712,,N,N,Y,Y,Y,forest
+mathias,Quail Ridge,Horse Trailer,1,38.488989,-122.151711,check,Y,Y,Y,Y,Y,forest
+mathias,Quail Ridge,Shane's Pond,2,38.47763,-122.14228,,Y,Y,Y,Y,Y,forest
+mathias,Quail Ridge,Field House,3,38.479995,-122.144625,,Y,Y,Y,Y,Y,forest
+mathias,Point Reyes,Weather Station,1,37.970556,-122.731797,,N,Y,Y,Y,Y,chaparral 
+mathias,Point Reyes,Right Fork,2,37.9709,-122.73534,,N,Y,Y,Y,Y,chaparral 
+mathias,Point Reyes,Left Fork,3,37.96703,-122.73035,,N,Y,Y,Y,Y,forest
+mathias,Fort Ord,Parking Spot,1,36.684908,-121.77692,,Y,N,Y,Y,Y,forest
+mathias,Fort Ord,Red Bench,2,36.685532,-121.775026,,Y,N,Y,Y,Y,forest
+mathias,Fort Ord,Far spot,3,36.685044,-121.774054,check,Y,N,Y,Y,Y,forest
+mathias,Hastings,Ravine,1,36.38845,-121.54774,,Y,Y,Y,Y,Y,forest
+mathias,Hastings,Patches ,2,36.385711,-121.551876,,Y,Y,Y,Y,Y,forest
+mathias,Hastings,Riot,3,36.38415,-121.55337,,Y,Y,Y,Y,Y,forest
+fire_gage,Hastings,HT BURN G02 ,,36.39362667,-121.5465606,,N,N,Y,Y,Y,grass
+fire_gage,Hastings,HT BURN G04 ,,36.39095894,-121.5472224,,N,N,Y,Y,Y,grass
+fire_gage,Hastings,HT BURN O01 ,,36.39523783,-121.5474775,,N,N,Y,Y,Y,forest
+fire_gage,Hastings,HT BURN O04 ,,36.39508552,-121.5503826,,N,N,Y,Y,Y,forest
+fire_gage,Hastings,HT UNBURN G03 ,,36.38537797,-121.5595681,,N,N,Y,Y,Y,grass
+fire_gage,Hastings,HT UNBURN G04 ,,36.38487328,-121.557399,,N,N,Y,Y,Y,grass
+fire_gage,Hastings,HT UNBURN O01 ,,36.38155322,-121.5547097,,N,N,Y,Y,Y,forest
+fire_gage,Hastings,HT UNBURN O02,,36.38314658,-121.5552017,,N,N,Y,Y,Y,forest
+mathias,Big Creek,Eagle Trail,1,36.070161,-121.598294,,Y,Y,Y,Y,Y,chaparral 
+mathias,Big Creek,Cliff,2,36.058876,-121.588237,,Y,Y,Y,Y,Y,chaparral 
+mathias,Big Creek,Chapparrel ,3,36.059886,-121.585957,,Y,Y,Y,Y,Y,chaparral 
+fire_gage,Big Creek,BC BURN R01 ,,36.06083665,-121.5855786,,N,N,Y,Y,Y,forest
+fire_gage,Big Creek,BC BURN R03 ,,36.06340808,-121.5863759,,N,N,Y,Y,Y,forest
+fire_gage,Big Creek,BC BURN S01 ,,36.06479826,-121.5875833,,N,N,Y,Y,Y,chaparral 
+fire_gage,Big Creek,BC BURN S02 ,,36.06299281,-121.5868828,,N,N,Y,Y,Y,chaparral 
+fire_gage,Big Creek,BC UNBURN R01,,36.07485,-121.5991853,,N,N,Y,Y,Y,forest
+fire_gage,Big Creek,BC UNBURN R02   ,,36.05719,-121.585715,,N,N,Y,Y,Y,forest
+fire_gage,Big Creek,BC UNBURN S02 ,,36.05821725,-121.5860467,,N,N,Y,Y,Y,chaparral 
+fire_gage,Big Creek,BC UNBURN S03 ,,36.05824573,-121.5852263,,N,N,Y,Y,Y,chaparral 
+mathias,Rancho Marino,Far Barn,1,35.53549,-121.08241,,N,Y,Y,Y,Y,forest
+mathias,Rancho Marino,Closer Barn,2,35.53624,-121.08302,,N,Y,Y,Y,Y,forest
+mathias,Rancho Marino,Gate,3,35.541394,-121.087618,,N,Y,Y,Y,Y,grass
+mathias,Sedgwick,Kate's place,1,34.69812,-120.04715,,Y,Y,Y,Y,Y,chaparral 
+mathias,Sedgwick,Far Fig,2,34.71622,-120.05077,,Y,Y,Y,Y,Y,forest
+mathias,Sedgwick,Canyon Fig,3,34.71581,-120.04928,,Y,Y,Y,Y,Y,forest
+mathias,Coal Oil,OG,1,34.4163,-119.8779,,Y,Y,Y,Y,Y,forest
+mathias,Coal Oil,Lizard Hiding Palace,2,34.4164,-119.87721,,Y,Y,Y,Y,Y,chaparral 
+mathias,Coal Oil,Far Trail,3,34.41425,-119.87868,,Y,Y,Y,Y,Y,forest
+mathias,Stunt Ranch,Ravine Trail,1,34.09381,-118.65601,,N,Y,Y,Y,Y,chaparral 
+mathias,Stunt Ranch,Top Patch,2,34.09252,-118.65698,,N,Y,Y,Y,Y,forest
+mathias,Stunt Ranch,Bottom Patch,3,34.09334,-118.65728,,N,Y,Y,Y,Y,forest
+mathias,Santa Cruz Island,Canyon Hot Spot,1,34.001384,-119.71451,,N,Y,Y,Y,Y,forest
+mathias,Santa Cruz Island,Lyndall's Place,2,33.996328,-119.727886,,N,Y,Y,Y,Y,forest
+mathias,Santa Cruz Island,Central Valley - Mechanic Station,3,33.996626,-119.719828,,N,Y,Y,Y,Y,forest

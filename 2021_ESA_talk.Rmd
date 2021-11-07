@@ -109,6 +109,10 @@ locationcolor = c('darkseagreen1', 'brown')
 
 # remove NA from month
 liz <- subset(liz, !is.na(month))
+
+
+
+
 ```
 
 #### Dataset 2: Lizard tidy
@@ -167,6 +171,7 @@ liz_tidy$location[liz_tidy$reserve == "Santa Cruz Island"] <- "inland"
 
 liz_tidy$month <- liz_tidy$round
 
+liz_tidy$round
 liz_tidy$month[liz_tidy$round == "2"] <- "March"
 liz_tidy$month[liz_tidy$round == "3"] <- "April"
 liz_tidy$month[liz_tidy$round == "4"] <- "May"
@@ -194,6 +199,8 @@ liz_tidy$julian <- as.numeric(liz_tidy$julian)
 liz_tidy$week <- round(liz_tidy$julian/7)
 
 liz_tidy
+
+liz_tidy %>% filter(reserve == "Rancho Marino") %>% select(round)
 ```
 
 #### Dataset 3: Climate from UCNRS weather stations
@@ -738,5 +745,235 @@ ggplot(full.7_goodliz, aes(x = location, y = log(count + 1)), group = location) 
   theme(strip.text.x = element_text(face = 'bold')) +
   theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5)) +
   theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5)) 
+```
+
+```{r}
+unique(liz_tidy$reserve)
+
+liz_main <- liz_tidy[which(liz_tidy$reserve == "Fort Ord" |
+                            liz_tidy$reserve == "Hastings" |
+                             liz_tidy$reserve == "Rancho Marino" |
+                             liz_tidy$reserve == "Sedgwick"),]
+
+```
+
+
+committee meeting graph
+```{r}
+ggplot(liz_main, aes(x = round, y = log(count + 1)), color = reserve) +
+  geom_boxplot(fill = "grey85")+
+  geom_jitter( aes(color = reserve),alpha = .6, width = .3) +
+  scale_color_manual(values = cal_palette("figmtn", n = 4, type = "continuous"))+
+  labs(x = "Sampling Round",y =  "log(tick counts)\n per lizard",color = "Reserve") +
+  theme_bw() +
+  facet_wrap(~location)+
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  theme(legend.position =  "bottom", legend.title = element_text(size = 8), legend.text =  element_text(size = 6), legend.key.size = unit(0, 'lines'))
+#ggsave("LizLocation.png", dpi = 320)
+
+
+
+
+
+
+## two variables
+
+ggplot(liz_main, aes(x = round, y = log(count + 1)), color = reserve) +
+  geom_boxplot(fill = "grey85")+
+  geom_jitter( aes(color = reserve),alpha = .6, width = .3) +
+  scale_color_manual(values = cal_palette("figmtn", n = 4, type = "continuous"))+
+  labs(x = "Sampling Round",y =  "log(tick counts) per lizard",color = "Reserve") +
+  theme_bw() +
+  facet_grid(lifestage~location)+
+  theme(strip.text.x = element_text(face = 'bold'),strip.background = element_rect(fill = 'gray95')) +
+  theme(axis.title.y =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  theme(axis.title.x =  element_text(face = 'bold',size = 11, vjust = .5)) +
+  theme(legend.position =  "bottom", legend.title = element_text(size = 8), legend.text =  element_text(size = 6), legend.key.size = unit(0, 'lines'))
+#ggsave("LizLocationGrid.png", dpi = 320)
+
+
+
+
+```
+```{r}
+# Libraries
+library(ggplot2)
+library(hrbrthemes)
+library(dplyr)
+library(tidyr)
+library(viridis)
+
+# The diamonds dataset is natively available with R.
+
+# Without transparency (left)
+
+liz_main_fo <-liz_tidy %>%
+  filter(reserve == "Fort Ord") 
+
+ggplot(data=liz_main_fo, aes(x= log(count+1), group=lifestage, fill=lifestage)) +
+    geom_density(adjust=1.5, alpha=.4) +
+    theme_ipsum()+
+  facet_wrap(~round, scale = "free_y") +
+# larval red, nymphal blue
+  guides(fill = FALSE)
+
+
+liz_main_se <-liz_tidy %>%
+  filter(reserve == "Sedgwick") 
+
+ggplot(data=liz_main_se, aes(x= log(count+1), group=lifestage, fill=lifestage)) +
+    geom_density(adjust=1.5, alpha=.4) +
+    theme_ipsum()+
+  facet_wrap(~round, scale = "free_y", nrow = 1) +
+# larval red, nymphal blue
+  guides(fill = FALSE)
+
+```
+```{r}
+
+liz_main$round <- as.numeric(liz_main$round)
+aggregate.smol.MWMA <- aggregate(count ~ reserve + round + lifestage, data=liz_main, FUN=sum)
+
+fo <- liz_tidy %>% 
+  filter(reserve == "Fort Ord")
+ggplot(fo, aes(x=as.numeric(log(count+1)), fill=lifestage)) +
+  geom_density(alpha=0.6) +
+  theme_bw()+
+  facet_wrap(~round) +
+    guides(fill = FALSE, color = FALSE)
+
+
+
+ht <- liz_tidy %>% 
+  filter(reserve == "Hastings")
+ggplot(ht, aes(x=as.numeric(log(count+1)), fill=lifestage)) +
+  geom_density(alpha=0.6) +
+  theme_bw()+
+  facet_wrap(~round)+
+    guides(fill = FALSE, color = FALSE)
+
+
+
+rm <- liz_tidy %>% 
+  filter(reserve == "Rancho Marino")
+ggplot(rm, aes(x=as.numeric(log(count+1)), fill=lifestage)) +
+  geom_density(alpha=0.6) +
+  theme_bw()+
+  facet_wrap(~round)+
+    guides(fill = FALSE, color = FALSE)
+
+
+sd <- liz_tidy %>% 
+  filter(reserve == "Sedgwick")
+ggplot(sd, aes(x=as.numeric(log(count+1)), fill=lifestage)) +
+  geom_density(alpha=0.6) +
+  theme_bw()+
+  facet_wrap(~round)+
+    guides(fill = FALSE, color = FALSE)
+
+
+sr <- liz_tidy %>% 
+  filter(reserve == "Stunt Ranch")
+ggplot(sr, aes(x=as.numeric(log(count+1)), fill=lifestage)) +
+  geom_density(alpha=0.6) +
+  theme_bw()+
+  facet_wrap(~round)+
+    guides(fill = FALSE, color = FALSE)
+
+
+```
+
+
+```{r}
+ggplot(liz_main, aes(as.numeric(round), count, color = lifestage, fill = lifestage)) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~reserve, scales = "free_y", nrow = 2)  +
+  labs(x = "Month", y = "Count") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "grey95"),
+        strip.text = element_text(size=7, face = 'bold'),
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7))+
+    guides(fill = FALSE, color = FALSE)
+
+coast <- liz_tidy %>%
+  filter(location == "coastal")
+
+co<- ggplot(coast, aes(as.numeric(round), count, color = lifestage, fill = lifestage)) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~reserve, scales = "free_y", ncol = 1)  +
+  labs(x = "Month", y = "Count") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "grey95"),
+        strip.text = element_text(size=7, face = 'bold'),
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7))+
+    guides(fill = FALSE, color = FALSE)
+
+inland <- liz_tidy %>%
+  filter(location == "inland") 
+
+inlandd<-ggplot(inland, aes(as.numeric(round), count, color = lifestage, fill = lifestage)) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~reserve, scales = "free_y", ncol = 1)  +
+  labs(x = "Month", y = "Count") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "grey95"),
+        strip.text = element_text(size=7, face = 'bold'),
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7))+
+    guides(fill = FALSE, color = FALSE)
+
+
+region_n<- liz_tidy %>%
+  filter(region == "northern") 
+
+n<-ggplot(region_n, aes(as.numeric(round), count, color = lifestage, fill = lifestage)) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~reserve, scales = "free_y", ncol = 1)  +
+  labs(x = "Month", y = "Count") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "grey95"),
+        strip.text = element_text(size=7, face = 'bold'),
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7))+
+    guides(fill = FALSE, color = FALSE)
+
+
+region_c<- liz_tidy %>%
+  filter(region == "central") 
+
+c<-ggplot(region_c, aes(as.numeric(round), count, color = lifestage, fill = lifestage)) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~reserve, scales = "free_y", ncol = 1)  +
+  labs(x = "Month", y = "Count") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "grey95"),
+        strip.text = element_text(size=7, face = 'bold'),
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7))+
+    guides(fill = FALSE, color = FALSE)
+
+region_s<- liz_tidy %>%
+  filter(region == "southern") 
+
+s<-ggplot(region_s, aes(as.numeric(round), count, color = lifestage, fill = lifestage)) +
+  geom_histogram(stat = "identity") +
+  facet_wrap(~reserve, scales = "free_y", ncol = 1)  +
+  labs(x = "Month", y = "Count") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "grey95"),
+        strip.text = element_text(size=7, face = 'bold'),
+        axis.text.x = element_text(size = 7),
+        axis.text.y = element_text(size = 7))+
+    guides(fill = FALSE, color = FALSE)
+
+
+library(ggpubr)
+ggarrange(n,c,s)
+ggarrange(co, inlandd)
+
 ```
 
