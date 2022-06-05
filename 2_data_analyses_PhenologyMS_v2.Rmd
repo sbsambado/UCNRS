@@ -1,0 +1,558 @@
+---
+title: "2_data_analyses_PhenologyMS_v2"
+author: "sbsambado"
+date: "5/24/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_chunk$set(message = FALSE)
+
+
+# needed packages
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(reshape2)
+library(MASS)
+library(lme4)
+library(kableExtra)
+library(psych)
+library(effects)
+library(jtools)
+library(forcats)
+```
+
+
+
+### Part 2: Climate & Ticks
+
+#### Dragged ticks
+
+##### Ixodes & Dermacentor
+
+`dragged_IxodesDerm_Climate_aggregate`
+```{r}
+
+###
+mod_2_1 <- glm(tick_tot ~ life_stage + julian + ppt_month + tmax + tmean + tmin + vpdmax + vpdmin,
+                 family = "poisson", 
+               data = dragged_IxodesDerm_Climate_aggregate)
+
+summary(mod_2_1)
+
+
+###
+mod_2_2 <- glm(tick_tot ~ life_stage + julian + ppt_month + tmax + tmean + tmin +  vpdmin,
+                 family = "poisson", 
+               data = dragged_IxodesDerm_Climate_aggregate)
+
+summary(mod_2_2)
+
+
+# all are significant let's check for collinearity
+
+pairs.panels(dragged_IxodesDerm_Climate_aggregate)
+
+# going to select tmean with highest cor with tick tot
+
+###
+mod_2_3 <- glm(tick_tot ~ life_stage + julian + ppt_month + tmean  + vpdmin,
+                 family = "poisson", 
+               data = dragged_IxodesDerm_Climate_aggregate)
+
+summary(mod_2_3)
+
+
+###
+mod_2_4 <- glm(tick_tot ~ julian + ppt_month + tmean  + vpdmin,
+                 family = "poisson", 
+               data = dragged_IxodesDerm_Climate_aggregate)
+
+summary(mod_2_4)
+
+
+###
+mod_2_5 <- glm(tick_tot ~  life_stage + ppt_month + tmean  + vpdmin,
+                 family = "poisson", 
+               data = dragged_IxodesDerm_Climate_aggregate)
+
+summary(mod_2_5)
+
+
+###
+mod_2_6 <- glm(tick_tot ~  julian + life_stage + ppt_month + tmean  + vpdmin,
+                 family = "poisson", 
+               data = dragged_IxodesDerm_Climate_aggregate)
+
+summary(mod_2_6) 
+
+###
+## adult
+dragged_IxodesDerm_Climate_aggregate_A <- dragged_IxodesDerm_Climate_aggregate %>%
+  filter(life_stage == "A")
+
+
+mod_2_7 <- glm(tick_tot ~ julian + ppt_month + tmean  + vpdmin,
+                 family = "poisson", 
+               data = dragged_IxodesDerm_Climate_aggregate_A)
+
+summary(mod_2_7) 
+
+
+###
+dragged_IxodesDerm_Climate_aggregate_J <- dragged_IxodesDerm_Climate_aggregate %>%
+  filter(life_stage != "A")
+
+
+mod_2_8 <- glm(tick_tot ~  julian + ppt_month + tmean  + vpdmin,
+                 family = "poisson", 
+               data = dragged_IxodesDerm_Climate_aggregate_J)
+
+summary(mod_2_8)
+
+
+```
+
+##### Ixodes
+
+`dragged_Ixodes_Climate_aggregate`
+
+```{r}
+###
+mod_2_9 <- glm(tick_tot ~ life_stage + julian + ppt_month + tmax + tmean + tmin + vpdmax + vpdmin,
+                 family = "poisson", 
+               data = dragged_Ixodes_Climate_aggregate)
+
+summary(mod_2_9)
+
+
+###
+mod_2_10 <- glm(tick_tot ~ life_stage + julian + ppt_month + tmax + tmean + tmin + vpdmax, # no vpdmin
+                 family = "poisson", 
+               data = dragged_Ixodes_Climate_aggregate)
+
+summary(mod_2_10)
+
+
+# all are significant let's check for collinearity
+
+pairs.panels(dragged_Ixodes_Climate_aggregate)
+
+# going to select tmin with highest cor with tick tot but lower cor with vpdmin comapred to tmean
+
+###
+mod_2_11 <- glm(tick_tot ~ life_stage + julian + ppt_month + tmin + vpdmax,
+                 family = "poisson", 
+               data = dragged_Ixodes_Climate_aggregate)
+
+summary(mod_2_11) # drop vpdmax
+
+
+###
+mod_2_12 <- glm(tick_tot ~ life_stage + julian + ppt_month + tmin,
+                 family = "poisson", 
+               data = dragged_Ixodes_Climate_aggregate)
+
+summary(mod_2_12) # everything significant except lifestageL
+
+
+###
+mod_2_13 <- glm(tick_tot ~  life_stage + ppt_month + tmin,
+                 family = "poisson", 
+               data = dragged_Ixodes_Climate_aggregate)
+
+summary(mod_2_13)
+
+
+###
+mod_2_14 <- glm(tick_tot ~  julian  +  ppt_month + tmin,
+                 family = "poisson", 
+               data = dragged_Ixodes_Climate_aggregate)
+
+summary(mod_2_14) 
+
+###
+## adult
+dragged_Ixodes_Climate_aggregate_A <- dragged_Ixodes_Climate_aggregate %>%
+  filter(life_stage == "A")
+
+
+mod_2_15 <- glm(tick_tot ~ julian + ppt_month + tmin,
+                 family = "poisson", 
+               data = dragged_Ixodes_Climate_aggregate_A)
+
+summary(mod_2_15) 
+
+
+###
+dragged_Ixodes_Climate_aggregate_J <- dragged_Ixodes_Climate_aggregate %>%
+  filter(life_stage != "A")
+
+
+mod_2_16 <- glm(tick_tot ~  julian + ppt_month + tmin,
+                 family = "poisson", 
+               data = dragged_Ixodes_Climate_aggregate_J)
+
+summary(mod_2_16)
+
+```
+
+
+##### Dermacentor
+
+`dragged_Derm_Climate_aggregate`
+
+```{r}
+###
+mod_2_17 <- glm(tick_tot ~ life_stage + julian + ppt_month + tmax + tmean + tmin + vpdmax + vpdmin,
+                 family = "poisson", 
+               data = dragged_Derm_Climate_aggregate)
+
+summary(mod_2_17)
+
+
+
+
+# all are significant let's check for collinearity
+
+pairs.panels(dragged_Derm_Climate_aggregate)
+
+
+
+###
+mod_2_18 <- glm(tick_tot ~ life_stage + julian + ppt_month +  tmin + vpdmin,
+                 family = "poisson", 
+               data = dragged_Derm_Climate_aggregate)
+
+summary(mod_2_18)
+
+
+###
+mod_2_19 <- glm(tick_tot ~ julian + ppt_month +  tmin + vpdmin,
+                 family = "poisson", 
+               data = dragged_Derm_Climate_aggregate)
+
+summary(mod_2_19)
+
+
+###
+mod_2_20 <- glm(tick_tot ~  life_stage + ppt_month + tmin  + vpdmin,
+                 family = "poisson", 
+               data = dragged_Derm_Climate_aggregate)
+
+summary(mod_2_20)
+
+
+###
+## adult
+dragged_Derm_Climate_aggregate_A <- dragged_Derm_Climate_aggregate %>%
+  filter(life_stage == "A")
+
+
+mod_2_21 <- glm(tick_tot ~ ppt_month + tmin  + vpdmin,
+                 family = "poisson", 
+               data = dragged_Derm_Climate_aggregate_A)
+
+summary(mod_2_21) 
+
+
+###
+dragged_Derm_Climate_aggregate_J <- dragged_Derm_Climate_aggregate %>%
+  filter(life_stage != "A")
+
+
+mod_2_22 <- glm(tick_tot ~  ppt_month + tmin  + vpdmin,
+                 family = "poisson", 
+               data = dragged_Derm_Climate_aggregate_J)
+
+summary(mod_2_22)
+
+```
+
+#### Lizard ticks
+
+(only Ixodes)
+
+`lizard_long_Climate`
+
+poisson or negative binomial?
+
+```{r}
+
+names(lizard_long_Climate)[6] <- "tick_tot"
+
+hist(lizard_long_Climate$tick_tot)
+hist(log(lizard_long_Climate$tick_tot +1))
+
+# may need to do neg binomial since count is more overdispersed
+
+
+# remove NAs to calculate mean and sd
+data_partial_nona <- lizard_long_Climate %>%
+  filter(lizard_long_Climate$tick_tot != "NA")
+
+
+with(data_partial_nona, tapply(tick_tot,life_stage, function(x) {
+    sprintf("M (SD) = %1.2f (%1.2f)", mean(x), sd(x))
+}))
+
+# larval >> "M (SD) = 2.65 (5.54)" nympal >> "M (SD) = 2.66 (3.97)" 
+
+# look at poisson
+mod_2_23_p <- glm(tick_tot ~ ppt_month + tmax + tmean + tmin + vpdmax + vpdmin,
+                 family = "poisson", 
+               data = lizard_long_Climate)
+
+summary(mod_2_23)
+
+# dispersion = ~ 3
+
+mod_2_23_nb <- glm.nb(tick_tot ~  ppt_month + tmax + tmean + tmin + vpdmax + vpdmin,
+               data = lizard_long_Climate)
+
+summary(mod_2_23)
+
+# perform a likleihood ratio test 
+pchisq(2*(logLik(mod_2_23_p) - logLik(mod_2_23_nb)), df = 1, lower.tail = FALSE)
+
+# looks like poisson is better
+```
+
+
+Build models
+```{r}
+
+
+###
+mod_2_23 <- glm(tick_tot ~ life_stage  + ppt_month + tmax + tmean + tmin + vpdmax + vpdmin,
+                 family = "poisson", 
+               data = lizard_long_Climate)
+
+summary(mod_2_23)
+
+
+###
+mod_2_24 <- glm(tick_tot ~ life_stage   + tmax + tmean + tmin  + vpdmin, # no ppt_month or vpdmax
+                 family = "poisson", 
+               data = lizard_long_Climate)
+
+summary(mod_2_24)
+
+
+# all are significant let's check for collinearity
+
+lizard_long_Climate_subset <- dplyr:: select(lizard_long_Climate, c("tick_tot","tmax", "tmean", "tmin", "ppt_month","vpdmin"))
+pairs.panels(lizard_long_Climate_subset)
+
+# going to select tmean and  with highest cor with tick tot but lower cor with vpdmin comapred to tmean.. willing to keep tmin since cor < .5
+
+###
+mod_2_25 <- glm(tick_tot ~ life_stage + tmean  + tmin + vpdmin,
+                 family = "poisson", 
+               data = lizard_long_Climate)
+
+summary(mod_2_25) 
+
+
+###
+mod_2_26 <- glm(tick_tot ~ tmean   + tmin + vpdmin,
+                 family = "poisson", 
+               data = lizard_long_Climate)
+
+summary(mod_2_26) # everything significant except lifestageL
+
+
+
+###
+## nymph
+lizard_long_Climate_N <- lizard_long_Climate %>%
+  filter(life_stage == "nymphal")
+
+
+mod_2_27 <- glm(tick_tot ~ tmean   + tmin + vpdmin,
+                 family = "poisson", 
+               data = lizard_long_Climate_N)
+
+summary(mod_2_27) 
+
+
+###
+lizard_long_Climate_L <- lizard_long_Climate %>%
+  filter(life_stage != "nymphal")
+
+
+mod_2_28 <- glm(tick_tot ~  tmean   + tmin + vpdmin,
+                 family = "poisson", 
+               data = lizard_long_Climate_L)
+
+summary(mod_2_28)
+
+```
+
+### Part 3: Climate & Juvenile Proportions
+
+`lizard_wide_Climate`
+```{r}
+
+#  mean is related to a set of regressors through a linear predictor with unknown coefficients and a link function. The model also includes a precision parameter which may be constant or depend on a (poten- tially different) set of regressors through a link function as well. This approach naturally incorporates features such as heteroskedasticity or skewness which are commonly observed in data taking values in the standard unit interval, such as rates or proportions.
+
+
+# beta regression is that you are allowing the variance of your response to be much larger than it could be in logistic regression in order to deal with the typical problem of over-dispersion
+
+#  It is useful in situations where the dependent variable is continuous and restricted to the unit interval (0, 1), e.g., resulting from rates or proportions. 
+
+# It is modeled to be beta-distributed with parametrization using mean and precision parameter (called phi). The mean is linked, as in generalized linear models (GLMs), to the responses through a link function and a linear predictor.
+
+# An important difference is that there are potentially two equations for mean and precision (Equations 3 and 4, respectively), and consequently two regressor matrices, two linear predictors, two sets of coefficients, etc.
+
+
+library(betareg)
+
+inputData <- read.csv("data/lizard_wide_Climate.csv") # 295, 29
+
+inputData_subset <- inputData %>% # 108 x 29
+  filter(prop != 0 & prop !=1)
+
+trainingIndex <- c(1:(nrow(inputData_subset) - 1))
+
+trainingData <- inputData_subset[trainingIndex, ]
+
+testData <- inputData_subset[-trainingIndex, ]
+betaMod <- betareg(prop ~ tmean + tmin + vpdmin + tmax + vpdmax + ppt_month, data = trainingData)
+
+summary(betaMod)
+predict(betaMod, testData)
+
+
+
+
+### another attempt
+
+mod_3_3 <- betareg(prop ~ tmean + tmin + vpdmin + tmax + vpdmax + ppt_month, data = inputData_subset)
+summary(mod_3_3)
+
+mod_3_4 <- betareg(prop ~ tmean + tmin + vpdmin + tmax  + ppt_month, data = inputData_subset)
+summary(mod_3_4)
+
+
+#betareg::lrtest(mod_3_3, mod_3_4)
+par(mfrow = c(2,2))
+plot(mod_3_3, which = 1:4, type = "pearson")
+plot(mod_3_3, which = 5, type = "deviance", sub.caption = "")
+plot(mod_3_3, which = 1, type = "deviance", sub.caption = "")
+
+
+
+## plot it
+
+library(ggplot2)
+ggplot(inputData_subset, aes(x = vpdmax, y = prop)) +
+  geom_point(size = 4, aes(fill = reserve), shape = 21) +
+  #scale_fill_grey() +
+  geom_line(aes(y = predict(mod_3_3, inputData_subset),
+                colour = "log-log", linetype = "log-log")) +
+ # geom_line(aes(y = predict(mod_3_3, inputData_subset), 
+               # colour = "logit", linetype = "logit")) +
+  scale_colour_manual("", values = c("red", "blue")) +
+  scale_linetype_manual("", values = c("solid", "dashed")) +
+  theme_bw() +
+  theme(legend.position = "bottom") +
+  labs(y = "Proportion of nymphs/juveniles", x = "Max vpd (kPA)") +
+  scale_x_discrete(limits = levels(inputData_subset$reserve),
+                   labels = c("McLaughlin" = "ML",
+                              "Quail Ridge" = "QR",
+                              "Point Reyes" = "PR",
+                              "Fort Ord" = "FO",
+                              "Hastings" = "HT",
+                              "Big Creek" = "BC",
+                              "Rancho Marino" = "RM",
+                              "Coal Oil Point" = "CO",
+                              "Sedgwick" = "SD",
+                              "Santa Cruz Island" = "SC",
+                              "Stunt Ranch" = "SR")) +
+  geom_hline(yintercept = 0.5, color = "black", type = "dashedline")
+
+
+
+## other plot
+
+library(rcompanion)
+
+mod_3_5 <- betareg(prop ~ vpdmax, data = inputData_subset)
+
+vpdmax <- plotPredy(data = inputData_subset, y = prop, x = vpdmax, model = mod_3_5, xlab = "Max vpd (kPa)", ylab  = "Proportion of nymphs/juveniles")
+
+
+mod_3_6 <- betareg(prop ~ tmean, data = inputData_subset)
+
+plotPredy(data = inputData_subset, y = prop, x = tmean, model = mod_3_6, xlab = "Mean Temperature", ylab  = "Proportion of nymphs/juveniles")
+
+
+mod_3_7 <- betareg(prop ~ tmin, data = inputData_subset)
+
+tmin <- plotPredy(data = inputData_subset, y = prop, x = tmin, model = mod_3_7, xlab = "Min Temperature", ylab  = "Proportion of nymphs/juveniles")
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+____________________
+used only lizard ticks
+
+`lizard_wide_Climate`
+
+Check data structure
+```{r}
+hist(lizard_wide_Climate$burden)
+hist(log(lizard_wide_Climate$burden +1))
+hist(lizard_wide_Climate$prop)
+
+dotchart(lizard_wide_Climate$prop)
+
+
+plot(lizard_wide_Climate$tmean, lizard_wide_Climate$prop)
+
+cor(lizard_wide_Climate$tmean, lizard_wide_Climate$prop)
+
+cor(lizard_wide_Climate$tmin, lizard_wide_Climate$prop)
+
+cor(lizard_wide_Climate$vpdmin, lizard_wide_Climate$prop)
+
+cor(lizard_wide_Climate$vpdmax, lizard_wide_Climate$prop)
+```
+
+GLM for proportional data (binomial)
+
+```{r}
+library(gam)
+mod_3_1 <- gam(prop ~ ppt_month + tmax + tmean + tmin + vpdmax + vpdmin,
+               family = quasibinomial, data = lizard_wide_Climate)
+
+summary(mod_3_1) # vpdmin sig
+
+
+y <- cbind(lizard_wide_Climate$n_final,lizard_wide_Climate$l_final)
+
+mod_3_2 <- glm(y ~ tmean + tmin + vpdmin, data = lizard_wide_Climate, family = binomial)
+summary(mod_3_2) #tmean tmin sig
+
+
+library(betareg)
+
+
+```
+
+
